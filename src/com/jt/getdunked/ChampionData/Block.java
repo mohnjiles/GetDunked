@@ -1,0 +1,33 @@
+
+package com.jt.getdunked.ChampionData;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import com.google.gson.annotations.Expose;
+
+
+public class Block {
+
+    
+    private String type;
+    
+    private List<Item> items = new ArrayList<Item>();
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public List<Item> getItems() {
+        return items;
+    }
+
+    public void setItems(List<Item> items) {
+        this.items = items;
+    }
+
+}
