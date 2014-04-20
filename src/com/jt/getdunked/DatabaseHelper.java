@@ -12,6 +12,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 import com.jt.getdunked.ChampionData.Blocks;
 import com.jt.getdunked.ChampionData.Champion;
+import com.jt.getdunked.ChampionData.Info;
 import com.jt.getdunked.ChampionData.Item;
 import com.jt.getdunked.ChampionData.Passive;
 import com.jt.getdunked.ChampionData.Recommended;
@@ -21,7 +22,7 @@ import com.jt.getdunked.ChampionData.Var;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
 
-	private static final int DATABASE_VERSION = 26;
+	private static final int DATABASE_VERSION = 29;
 	private static final String DATABASE_NAME = "championManager";
 
 	private static final String TABLE_CHAMPIONS = "champions";
@@ -85,27 +86,22 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 	private static final String KEY_COSTBURN = "costBurn";
 	private static final String KEY_RANGEBURN = "rangeBurn";
 	private static final String KEY_SPELL_RESOURCE = "resource";
-	
-	/**************************
-	 * 
-	 * MAKE KEY_VAR*_3 AND KEY_VAR*_4
-	 * 
-	 **************************/
+
 	private static final String KEY_VARKEY_0 = "varKey_0";
 	private static final String KEY_VARKEY_1 = "varKey_1";
 	private static final String KEY_VARKEY_2 = "varKey_2";
+	private static final String KEY_VARKEY_3 = "varKey_3";
+	private static final String KEY_VARKEY_4 = "varKey_4";
 	private static final String KEY_VARLINK_0 = "varLink_0";
 	private static final String KEY_VARLINK_1 = "varLink_1";
 	private static final String KEY_VARLINK_2 = "varLink_2";
+	private static final String KEY_VARLINK_3 = "varLink_3";
+	private static final String KEY_VARLINK_4 = "varLink_4";
 	private static final String KEY_VARCOEFF_0 = "varCoeff_0";
 	private static final String KEY_VARCOEFF_1 = "varCoeff_1";
 	private static final String KEY_VARCOEFF_2 = "varCoeff_2";
-	
-	/**************************
-	 * 
-	 * MAKE KEY_VAR*_3 AND KEY_VAR*_4
-	 * 
-	 **************************/
+	private static final String KEY_VARCOEFF_3 = "varCoeff_3";
+	private static final String KEY_VARCOEFF_4 = "varCoeff_4";
 
 	private static final String TABLE_STATS = "stats";
 	private static final String KEY_ARMOR = "armor";
@@ -182,6 +178,15 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 			passiveCursor.moveToFirst();
 		}
 
+		Cursor infoCursor = db.query(TABLE_INFO, new String[] { KEY_ID,
+				KEY_DEFENSE, KEY_DIFFICULTY, KEY_ATTACK, KEY_MAGIC }, KEY_ID
+				+ " = ?", new String[] { String.valueOf(id) }, null, null,
+				null, null);
+
+		if (infoCursor != null) {
+			infoCursor.moveToFirst();
+		}
+
 		Cursor skinsCursor = db.query(TABLE_SKINS, new String[] { KEY_ID,
 				KEY_SKIN_ID, KEY_SKIN_NAME }, KEY_ID + " = ?",
 				new String[] { String.valueOf(id) }, null, null, null, null);
@@ -215,6 +220,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 				.getString(2).split("---"))));
 		champ.setPassive(passive);
 		champ.setSkins(skinList);
+		champ.setInfo(new Info.Builder(4)
+		.setDefense(Integer.parseInt(infoCursor.getString(1)))
+		.setDifficulty(Integer.parseInt(infoCursor.getString(2)))
+		.build());
 
 		// for (int i = 0; i < 5; i++) {
 		// Log.w("SQL", cursor.getString(i));
@@ -391,9 +400,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 			values.put(KEY_ID, champ.getId().intValue());
 			values.put(KEY_SKIN_ID, skin.getId().intValue());
 			values.put(KEY_SKIN_NAME, skin.getName());
+			db.insert(TABLE_SKINS, null, values);
 		}
 
-		db.insert(TABLE_SKINS, null, values);
 	}
 
 	private void addRecommended(Champion champ, SQLiteDatabase db) {
@@ -433,9 +442,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 					}
 				}
 			}
+			db.insert(TABLE_RECOMMENDED, null, values);
 		}
 
-		db.insert(TABLE_RECOMMENDED, null, values);
 	}
 
 	private void addSpells(Champion champ, SQLiteDatabase db) {
@@ -464,9 +473,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 				values.put("varCoeff_" + i, var.getCoeff().get(0));
 				i++;
 			}
-		}
 
-		db.insert(TABLE_SPELLS, null, values);
+			db.insert(TABLE_SPELLS, null, values);
+		}
 	}
 
 	private void addStats(Champion champ, SQLiteDatabase db) {
@@ -553,9 +562,12 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 				+ KEY_COSTBURN + " TEXT," + KEY_RANGEBURN + " TEXT,"
 				+ KEY_SPELL_RESOURCE + " TEXT," + KEY_VARKEY_0 + " TEXT,"
 				+ KEY_VARKEY_1 + " TEXT," + KEY_VARKEY_2 + " TEXT,"
+				+ KEY_VARKEY_3 + " TEXT," + KEY_VARKEY_4 + " TEXT,"
 				+ KEY_VARLINK_0 + " TEXT," + KEY_VARLINK_1 + " TEXT,"
-				+ KEY_VARLINK_2 + " TEXT," + KEY_VARCOEFF_0 + " TEXT,"
-				+ KEY_VARCOEFF_1 + " TEXT," + KEY_VARCOEFF_2 + " TEXT" + ")";
+				+ KEY_VARLINK_2 + " TEXT," + KEY_VARLINK_3 + " TEXT,"
+				+ KEY_VARLINK_4 + " TEXT," + KEY_VARCOEFF_0 + " TEXT,"
+				+ KEY_VARCOEFF_1 + " TEXT," + KEY_VARCOEFF_2 + " TEXT,"
+				+ KEY_VARCOEFF_3 + " TEXT," + KEY_VARCOEFF_4 + " TEXT" + ")";
 
 		String CREATE_STATS_TABLE = "CREATE TABLE " + TABLE_STATS + "("
 				+ KEY_ID + " INTEGER PRIMARY KEY," + KEY_ARMOR + " TEXT,"
@@ -584,7 +596,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 				+ " INTEGER," + KEY_DEFENSIVE_0 + " INTEGER," + KEY_DEFENSIVE_1
 				+ " INTEGER," + KEY_DEFENSIVE_2 + " INTEGER," + KEY_DEFENSIVE_3
 				+ " INTEGER," + KEY_DEFENSIVE_4 + " INTEGER,"
-				+ " PRIMARY KEY (" + KEY_ID + ", " + KEY_TITLE + ")" + ")";
+				+ " PRIMARY KEY (" + KEY_ID + ", " + KEY_TITLE + ", "
+				+ KEY_MODE + ")" + ")";
 
 		db.execSQL(CREATE_CHAMPIONS_TABLE);
 		db.execSQL(CREATE_INFO_TABLE);

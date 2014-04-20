@@ -1,36 +1,87 @@
-
 package com.jt.getdunked.ChampionData;
 
 import java.util.List;
 
-public class Info{
-   	private Number attack;
-   	private Number defense;
-   	private Number difficulty;
-   	private Number magic;
+public class Info {
+	private Number attack;
+	private Number defense;
+	private Number difficulty;
+	private Number magic;
 
- 	public Number getAttack(){
+	public static class Builder {
+		// required
+		private final int size;
+
+		private int attack = 0;
+		private int defense = 0;
+		private int difficulty = 0;
+		private int magic = 0;
+
+		public Builder(int size) {
+			this.size = size;
+		}
+
+		public Builder setAttack(int value) {
+			attack = value;
+			return this;
+		}
+
+		public Builder setDefense(int value) {
+			defense = value;
+			return this;
+		}
+
+		public Builder setDifficulty(int value) {
+			difficulty = value;
+			return this;
+		}
+
+		public Builder setMagic(int value) {
+			magic = value;
+			return this;
+		}
+
+		public Info build() {
+			return new Info(this);
+		}
+	}
+
+	private Info(Builder builder) {
+		attack = builder.attack;
+		defense = builder.defense;
+		difficulty = builder.difficulty;
+		magic = builder.magic;
+	}
+
+	public Number getAttack() {
 		return this.attack;
 	}
-	public void setAttack(Number attack){
+
+	public void setAttack(Number attack) {
 		this.attack = attack;
 	}
- 	public Number getDefense(){
+
+	public Number getDefense() {
 		return this.defense;
 	}
-	public void setDefense(Number defense){
+
+	public void setDefense(Number defense) {
 		this.defense = defense;
 	}
- 	public Number getDifficulty(){
+
+	public Number getDifficulty() {
 		return this.difficulty;
 	}
-	public void setDifficulty(Number difficulty){
+
+	public void setDifficulty(Number difficulty) {
 		this.difficulty = difficulty;
 	}
- 	public Number getMagic(){
+
+	public Number getMagic() {
 		return this.magic;
 	}
-	public void setMagic(Number magic){
+
+	public void setMagic(Number magic) {
 		this.magic = magic;
 	}
 }
