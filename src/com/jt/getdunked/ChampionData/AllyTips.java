@@ -4,7 +4,7 @@ package com.jt.getdunked.ChampionData;
 import java.util.List;
 
 public class AllyTips{
-   	private List<?> allytips;
+   	private List<String> allytips;
    	private Number id;
    	private String key;
    	private String name;
@@ -14,7 +14,7 @@ public class AllyTips{
    		
    	}
    	
-   	public AllyTips(List<?> allytips, Number id, String key, String name, String title) {
+   	public AllyTips(List<String> allytips, Number id, String key, String name, String title) {
    		this.allytips = allytips;
    		this.id = id;
    		this.key = key;
@@ -22,10 +22,10 @@ public class AllyTips{
    		this.title = title;
    	}
 
- 	public List<?> getAllytips(){
+ 	public List<String> getAllytips(){
 		return this.allytips;
 	}
-	public void setAllytips(List<?> allytips){
+	public void setAllytips(List<String> allytips){
 		this.allytips = allytips;
 	}
  	public Number getId(){

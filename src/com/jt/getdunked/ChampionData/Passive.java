@@ -1,51 +1,36 @@
 
 package com.jt.getdunked.ChampionData;
 
+import java.util.List;
 
-import com.google.gson.annotations.Expose;
+public class Passive{
+   	private String description;
+   	private Image image;
+   	private String name;
+   	private String sanitizedDescription;
 
-
-public class Passive {
-
-    
-    private String name;
-    
-    private String description;
-    
-    private String sanitizedDescription;
-    
-    private Image image;
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public String getSanitizedDescription() {
-        return sanitizedDescription;
-    }
-
-    public void setSanitizedDescription(String sanitizedDescription) {
-        this.sanitizedDescription = sanitizedDescription;
-    }
-
-    public Image getImage() {
-        return image;
-    }
-
-    public void setImage(Image image) {
-        this.image = image;
-    }
-
+ 	public String getDescription(){
+		return this.description;
+	}
+	public void setDescription(String description){
+		this.description = description;
+	}
+ 	public Image getImage(){
+		return this.image;
+	}
+	public void setImage(Image image){
+		this.image = image;
+	}
+ 	public String getName(){
+		return this.name;
+	}
+	public void setName(String name){
+		this.name = name;
+	}
+ 	public String getSanitizedDescription(){
+		return this.sanitizedDescription;
+	}
+	public void setSanitizedDescription(String sanitizedDescription){
+		this.sanitizedDescription = sanitizedDescription;
+	}
 }

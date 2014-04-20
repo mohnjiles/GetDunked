@@ -3,11 +3,11 @@ package com.jt.getdunked.ChampionData;
 
 import java.util.List;
 
-public class ChampSkins {
+public class ChampPassive{
    	private Number id;
    	private String key;
    	private String name;
-   	private List<Skins> skins;
+   	private Passive passive;
    	private String title;
 
  	public Number getId(){
@@ -28,11 +28,11 @@ public class ChampSkins {
 	public void setName(String name){
 		this.name = name;
 	}
- 	public List<Skins> getSkins(){
-		return this.skins;
+ 	public Passive getPassive(){
+		return this.passive;
 	}
-	public void setSkins(List<Skins> skins){
-		this.skins = skins;
+	public void setPassive(Passive passive){
+		this.passive = passive;
 	}
  	public String getTitle(){
 		return this.title;

@@ -1,81 +1,57 @@
 
 package com.jt.getdunked.ChampionData;
 
+import java.util.List;
 
-import com.google.gson.annotations.Expose;
+public class Image{
+   	private String full;
+   	private String group;
+   	private Number h;
+   	private String sprite;
+   	private Number w;
+   	private Number x;
+   	private Number y;
 
-
-public class Image {
-
-    
-    private String full;
-    
-    private String sprite;
-    
-    private String group;
-    
-    private Integer x;
-    
-    private Integer y;
-    
-    private Integer w;
-    
-    private Integer h;
-
-    public String getFull() {
-        return full;
-    }
-
-    public void setFull(String full) {
-        this.full = full;
-    }
-
-    public String getSprite() {
-        return sprite;
-    }
-
-    public void setSprite(String sprite) {
-        this.sprite = sprite;
-    }
-
-    public String getGroup() {
-        return group;
-    }
-
-    public void setGroup(String group) {
-        this.group = group;
-    }
-
-    public Integer getX() {
-        return x;
-    }
-
-    public void setX(Integer x) {
-        this.x = x;
-    }
-
-    public Integer getY() {
-        return y;
-    }
-
-    public void setY(Integer y) {
-        this.y = y;
-    }
-
-    public Integer getW() {
-        return w;
-    }
-
-    public void setW(Integer w) {
-        this.w = w;
-    }
-
-    public Integer getH() {
-        return h;
-    }
-
-    public void setH(Integer h) {
-        this.h = h;
-    }
-
+ 	public String getFull(){
+		return this.full;
+	}
+	public void setFull(String full){
+		this.full = full;
+	}
+ 	public String getGroup(){
+		return this.group;
+	}
+	public void setGroup(String group){
+		this.group = group;
+	}
+ 	public Number getH(){
+		return this.h;
+	}
+	public void setH(Number h){
+		this.h = h;
+	}
+ 	public String getSprite(){
+		return this.sprite;
+	}
+	public void setSprite(String sprite){
+		this.sprite = sprite;
+	}
+ 	public Number getW(){
+		return this.w;
+	}
+	public void setW(Number w){
+		this.w = w;
+	}
+ 	public Number getX(){
+		return this.x;
+	}
+	public void setX(Number x){
+		this.x = x;
+	}
+ 	public Number getY(){
+		return this.y;
+	}
+	public void setY(Number y){
+		this.y = y;
+	}
 }

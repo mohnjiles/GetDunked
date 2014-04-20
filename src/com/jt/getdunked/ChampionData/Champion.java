@@ -38,7 +38,7 @@ public class Champion {
     
     private Stats stats;
     
-    private List<ChampionSpell> spells = new ArrayList<ChampionSpell>();
+    private List<Spell> spells = new ArrayList<Spell>();
     
     private Passive passive;
     
@@ -156,11 +156,11 @@ public class Champion {
         this.stats = stats;
     }
 
-    public List<ChampionSpell> getSpells() {
+    public List<Spell> getSpells() {
         return spells;
     }
 
-    public void setSpells(List<ChampionSpell> spells) {
+    public void setSpells(List<Spell> spells) {
         this.spells = spells;
     }
 

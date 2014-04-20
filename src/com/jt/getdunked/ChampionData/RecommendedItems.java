@@ -7,7 +7,7 @@ public class RecommendedItems{
    	private Number id;
    	private String key;
    	private String name;
-   	private List recommended;
+   	private List<Recommended> recommended;
    	private String title;
 
  	public Number getId(){
@@ -28,10 +28,10 @@ public class RecommendedItems{
 	public void setName(String name){
 		this.name = name;
 	}
- 	public List getRecommended(){
+ 	public List<Recommended>  getRecommended(){
 		return this.recommended;
 	}
-	public void setRecommended(List recommended){
+	public void setRecommended(List<Recommended>  recommended){
 		this.recommended = recommended;
 	}
  	public String getTitle(){

@@ -12,16 +12,16 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 import com.jt.getdunked.ChampionData.Blocks;
 import com.jt.getdunked.ChampionData.Champion;
-import com.jt.getdunked.ChampionData.ChampionSpell;
 import com.jt.getdunked.ChampionData.Item;
 import com.jt.getdunked.ChampionData.Passive;
 import com.jt.getdunked.ChampionData.Recommended;
 import com.jt.getdunked.ChampionData.Skins;
-import com.jt.getdunked.ChampionData.SpellVars;
+import com.jt.getdunked.ChampionData.Spell;
+import com.jt.getdunked.ChampionData.Var;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
 
-	private static final int DATABASE_VERSION = 2;
+	private static final int DATABASE_VERSION = 26;
 	private static final String DATABASE_NAME = "championManager";
 
 	private static final String TABLE_CHAMPIONS = "champions";
@@ -50,7 +50,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
 	private static final String TABLE_PASSIVE = "passive";
 	private static final String KEY_PASSIVE_DESCRIPTION = "sanitizedDescription";
-	private static final String KEY_PASSIVE_NAME = "name";
+	private static final String KEY_PASSIVE_NAME = "passiveName";
 
 	private static final String TABLE_RECOMMENDED = "recommended";
 	private static final String KEY_MAP = "map";
@@ -77,7 +77,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 	private static final String KEY_DEFENSIVE_4 = "defensive_4";
 
 	private static final String TABLE_SPELLS = "spells";
-	private static final String KEY_SPELL_NAME = "name";
+	private static final String KEY_SPELL_NAME = "spellName";
 	private static final String KEY_DESCRIPTION = "sanitizedDescription";
 	private static final String KEY_TOOLTIP = "sanitizedTooltip";
 	private static final String KEY_COOLDOWNBURN = "cooldownBurn";
@@ -85,12 +85,27 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 	private static final String KEY_COSTBURN = "costBurn";
 	private static final String KEY_RANGEBURN = "rangeBurn";
 	private static final String KEY_SPELL_RESOURCE = "resource";
+	
+	/**************************
+	 * 
+	 * MAKE KEY_VAR*_3 AND KEY_VAR*_4
+	 * 
+	 **************************/
 	private static final String KEY_VARKEY_0 = "varKey_0";
 	private static final String KEY_VARKEY_1 = "varKey_1";
+	private static final String KEY_VARKEY_2 = "varKey_2";
 	private static final String KEY_VARLINK_0 = "varLink_0";
 	private static final String KEY_VARLINK_1 = "varLink_1";
+	private static final String KEY_VARLINK_2 = "varLink_2";
 	private static final String KEY_VARCOEFF_0 = "varCoeff_0";
 	private static final String KEY_VARCOEFF_1 = "varCoeff_1";
+	private static final String KEY_VARCOEFF_2 = "varCoeff_2";
+	
+	/**************************
+	 * 
+	 * MAKE KEY_VAR*_3 AND KEY_VAR*_4
+	 * 
+	 **************************/
 
 	private static final String TABLE_STATS = "stats";
 	private static final String KEY_ARMOR = "armor";
@@ -106,7 +121,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 	private static final String KEY_MP_PER_LEVEl = "mpPerLevel";
 	private static final String KEY_MP_REGEN = "mpRegen";
 	private static final String KEY_MP_REGEN_PER_LEVEL = "mpRegenPerLevel";
-	private static final String KEY_HP = "hp";
+	private static final String KEY_HP = "hitPoints";
 	private static final String KEY_HP_PER_LEVEL = "hpPerLevel";
 	private static final String KEY_HP_REGEN = "hpRegen";
 	private static final String KEY_HP_REGEN_PER_LEVEL = "hpRegenPerLevel";
@@ -137,7 +152,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 	}
 
 	public Champion getChampion(int id) {
-		
+
 		List<Skins> skinList = new ArrayList<Skins>();
 
 		SQLiteDatabase db = this.getReadableDatabase();
@@ -170,13 +185,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 		Cursor skinsCursor = db.query(TABLE_SKINS, new String[] { KEY_ID,
 				KEY_SKIN_ID, KEY_SKIN_NAME }, KEY_ID + " = ?",
 				new String[] { String.valueOf(id) }, null, null, null, null);
-		
+
 		if (skinsCursor.moveToFirst()) {
 			do {
 				Skins skin = new Skins();
 				skin.setId(Integer.valueOf(skinsCursor.getString(1)));
 				skin.setName(skinsCursor.getString(2));
-				
+
 				skinList.add(skin);
 			} while (skinsCursor.moveToNext());
 		}
@@ -187,7 +202,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
 		Champion champ = new Champion();
 
-		champ.setId(Integer.parseInt(champCursor.getString(0))); 
+		champ.setId(Integer.parseInt(champCursor.getString(0)));
 		champ.setTags(new ArrayList<String>(Arrays.asList(champCursor
 				.getString(3).split(","))));
 		champ.setKey(champCursor.getString(4));
@@ -339,8 +354,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 		values.put(KEY_TITLE, champ.getTitle());
 
 		String champTags = "";
-		for (String tag : champ.getTags()) {
-			champTags += tag + ",";
+		List<String> tagList = (List<String>) champ.getTags();
+		for (String tag : tagList) {
+			champTags += tag.toString() + ",";
 		}
 		values.put(KEY_TAGS, champTags);
 
@@ -425,7 +441,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 	private void addSpells(Champion champ, SQLiteDatabase db) {
 		ContentValues values = new ContentValues();
 
-		for (ChampionSpell spell : champ.getSpells()) {
+		for (Spell spell : champ.getSpells()) {
 			values.put(KEY_SPELL_NAME, spell.getName());
 			values.put(KEY_ID, champ.getId().intValue());
 			values.put(KEY_DESCRIPTION, spell.getSanitizedDescription());
@@ -442,10 +458,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 			values.put(KEY_SPELL_RESOURCE, spell.getResource());
 
 			int i = 0;
-			for (SpellVars var : spell.getSpellVarss()) {
+			for (Var var : spell.getVars()) {
 				values.put("varKey_" + i, var.getKey());
 				values.put("varLink_" + i, var.getLink());
-				values.put("varCoeff_" + i, var.getCoeff());
+				values.put("varCoeff_" + i, var.getCoeff().get(0));
 				i++;
 			}
 		}
@@ -501,6 +517,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 		values.put(KEY_DIFFICULTY, champ.getInfo().getDifficulty().intValue());
 		values.put(KEY_MAGIC, champ.getInfo().getMagic().intValue());
 		values.put(KEY_ATTACK, champ.getInfo().getAttack().intValue());
+
+		db.insert(TABLE_INFO, null, values);
 	}
 
 	@Override
@@ -534,9 +552,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 				+ KEY_COOLDOWNBURN + " TEXT," + KEY_EFFECTBURN + " TEXT,"
 				+ KEY_COSTBURN + " TEXT," + KEY_RANGEBURN + " TEXT,"
 				+ KEY_SPELL_RESOURCE + " TEXT," + KEY_VARKEY_0 + " TEXT,"
-				+ KEY_VARKEY_1 + " TEXT," + KEY_VARLINK_0 + " TEXT,"
-				+ KEY_VARLINK_1 + " TEXT," + KEY_VARCOEFF_0 + " TEXT,"
-				+ KEY_VARCOEFF_1 + " TEXT" + ")";
+				+ KEY_VARKEY_1 + " TEXT," + KEY_VARKEY_2 + " TEXT,"
+				+ KEY_VARLINK_0 + " TEXT," + KEY_VARLINK_1 + " TEXT,"
+				+ KEY_VARLINK_2 + " TEXT," + KEY_VARCOEFF_0 + " TEXT,"
+				+ KEY_VARCOEFF_1 + " TEXT," + KEY_VARCOEFF_2 + " TEXT" + ")";
 
 		String CREATE_STATS_TABLE = "CREATE TABLE " + TABLE_STATS + "("
 				+ KEY_ID + " INTEGER PRIMARY KEY," + KEY_ARMOR + " TEXT,"
@@ -546,25 +565,26 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 				+ " TEXT," + KEY_ATTACK_DAMAGE_PER_LEVEL + " TEXT," + KEY_CRIT
 				+ " TEXT," + KEY_CRIT_PER_LEVEL + " TEXT," + KEY_MP + " TEXT,"
 				+ KEY_MP_PER_LEVEl + " TEXT," + KEY_MP_REGEN + " TEXT,"
-				+ KEY_MP_REGEN_PER_LEVEL + " TEXT," + KEY_HP + KEY_HP_PER_LEVEL
-				+ " TEXT," + KEY_HP_REGEN + " TEXT," + KEY_HP_REGEN_PER_LEVEL
-				+ " TEXT," + KEY_MAGIC_RES + " TEXT," + KEY_MAGIC_RES_PER_LEVEL
-				+ " TEXT," + KEY_MOVESPEED + " TEXT," + ")";
+				+ KEY_MP_REGEN_PER_LEVEL + " TEXT," + KEY_HP + " TEXT,"
+				+ KEY_HP_PER_LEVEL + " TEXT," + KEY_HP_REGEN + " TEXT,"
+				+ KEY_HP_REGEN_PER_LEVEL + " TEXT," + KEY_MAGIC_RES + " TEXT,"
+				+ KEY_MAGIC_RES_PER_LEVEL + " TEXT," + KEY_MOVESPEED + " TEXT"
+				+ ")";
 
 		String CREATE_RECOMMENDED_TABLE = "CREATE TABLE " + TABLE_RECOMMENDED
 				+ "(" + KEY_ID + " INTEGER," + KEY_MAP + " TEXT," + KEY_TITLE
-				+ " TEXT PRIMARY KEY," + KEY_MODE + " INTEGER,"
-				+ KEY_STARTING_0 + " INTEGER," + KEY_STARTING_1 + " INTEGER,"
-				+ KEY_STARTING_2 + " INTEGER," + KEY_STARTING_3 + " INTEGER,"
-				+ KEY_STARTING_4 + " INTEGER," + KEY_ESSENTIAL_0 + " INTEGER,"
-				+ KEY_ESSENTIAL_1 + " INTEGER," + KEY_ESSENTIAL_2 + " INTEGER,"
-				+ KEY_ESSENTIAL_3 + " INTEGER," + KEY_ESSENTIAL_4 + " INTEGER,"
-				+ KEY_OFFENSIVE_0 + " INTEGER," + KEY_OFFENSIVE_1 + " INTEGER,"
-				+ KEY_OFFENSIVE_2 + " INTEGER," + KEY_OFFENSIVE_3 + " INTEGER,"
-				+ KEY_OFFENSIVE_4 + " INTEGER," + KEY_DEFENSIVE_0 + " INTEGER,"
-				+ KEY_DEFENSIVE_1 + " INTEGER," + KEY_DEFENSIVE_2 + " INTEGER,"
-				+ KEY_DEFENSIVE_3 + " INTEGER," + KEY_DEFENSIVE_4 + " INTEGER"
-				+ ")";
+				+ " TEXT," + KEY_MODE + " INTEGER," + KEY_STARTING_0
+				+ " INTEGER," + KEY_STARTING_1 + " INTEGER," + KEY_STARTING_2
+				+ " INTEGER," + KEY_STARTING_3 + " INTEGER," + KEY_STARTING_4
+				+ " INTEGER," + KEY_ESSENTIAL_0 + " INTEGER," + KEY_ESSENTIAL_1
+				+ " INTEGER," + KEY_ESSENTIAL_2 + " INTEGER," + KEY_ESSENTIAL_3
+				+ " INTEGER," + KEY_ESSENTIAL_4 + " INTEGER," + KEY_OFFENSIVE_0
+				+ " INTEGER," + KEY_OFFENSIVE_1 + " INTEGER," + KEY_OFFENSIVE_2
+				+ " INTEGER," + KEY_OFFENSIVE_3 + " INTEGER," + KEY_OFFENSIVE_4
+				+ " INTEGER," + KEY_DEFENSIVE_0 + " INTEGER," + KEY_DEFENSIVE_1
+				+ " INTEGER," + KEY_DEFENSIVE_2 + " INTEGER," + KEY_DEFENSIVE_3
+				+ " INTEGER," + KEY_DEFENSIVE_4 + " INTEGER,"
+				+ " PRIMARY KEY (" + KEY_ID + ", " + KEY_TITLE + ")" + ")";
 
 		db.execSQL(CREATE_CHAMPIONS_TABLE);
 		db.execSQL(CREATE_INFO_TABLE);
@@ -579,10 +599,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
 	@Override
 	public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-		db.execSQL("DROP TABLE IF EXISTS " + TABLE_CHAMPIONS + "," + TABLE_INFO
-				+ "," + TABLE_PASSIVE + "," + TABLE_RECOMMENDED + ","
-				+ TABLE_SKINS + "," + TABLE_SPELLS + "," + TABLE_STATS + ","
-				+ TABLE_TIPS);
+		db.execSQL("DROP TABLE IF EXISTS " + TABLE_CHAMPIONS);
+		db.execSQL("DROP TABLE IF EXISTS " + TABLE_INFO);
+		db.execSQL("DROP TABLE IF EXISTS " + TABLE_PASSIVE);
+		db.execSQL("DROP TABLE IF EXISTS " + TABLE_RECOMMENDED);
+		db.execSQL("DROP TABLE IF EXISTS " + TABLE_SKINS);
+		db.execSQL("DROP TABLE IF EXISTS " + TABLE_SPELLS);
+		db.execSQL("DROP TABLE IF EXISTS " + TABLE_STATS);
+		db.execSQL("DROP TABLE IF EXISTS " + TABLE_TIPS);
 
 		// Create tables again
 		onCreate(db);

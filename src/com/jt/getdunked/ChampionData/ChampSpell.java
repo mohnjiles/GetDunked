@@ -1,43 +1,61 @@
 
 package com.jt.getdunked.ChampionData;
 
+import java.util.ArrayList;
 import java.util.List;
+import com.google.gson.annotations.Expose;
 
-public class ChampSpell{
-   	private Number id;
-   	private String key;
-   	private String name;
-   	private List spells;
-   	private String title;
+public class ChampSpell {
 
- 	public Number getId(){
-		return this.id;
-	}
-	public void setId(Number id){
-		this.id = id;
-	}
- 	public String getKey(){
-		return this.key;
-	}
-	public void setKey(String key){
-		this.key = key;
-	}
- 	public String getName(){
-		return this.name;
-	}
-	public void setName(String name){
-		this.name = name;
-	}
- 	public List getSpells(){
-		return this.spells;
-	}
-	public void setSpells(List spells){
-		this.spells = spells;
-	}
- 	public String getTitle(){
-		return this.title;
-	}
-	public void setTitle(String title){
-		this.title = title;
-	}
+    @Expose
+    private Integer id;
+    @Expose
+    private String key;
+    @Expose
+    private String name;
+    @Expose
+    private String title;
+    @Expose
+    private List<Spell> spells = new ArrayList<Spell>();
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public String getKey() {
+        return key;
+    }
+
+    public void setKey(String key) {
+        this.key = key;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public List<Spell> getSpells() {
+        return spells;
+    }
+
+    public void setSpells(List<Spell> spells) {
+        this.spells = spells;
+    }
+
 }
