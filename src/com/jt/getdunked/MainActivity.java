@@ -1,7 +1,10 @@
 package com.jt.getdunked;
 
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import android.app.ActionBar;
@@ -9,6 +12,8 @@ import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.content.Context;
+import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteException;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.widget.DrawerLayout;
@@ -20,22 +25,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.GridView;
 
-import com.jt.getdunked.ChampionData.AllyTips;
-import com.jt.getdunked.ChampionData.Blurb;
 import com.jt.getdunked.ChampionData.ChampIds;
-import com.jt.getdunked.ChampionData.ChampInfo;
-import com.jt.getdunked.ChampionData.ChampPassive;
-import com.jt.getdunked.ChampionData.ChampSkins;
-import com.jt.getdunked.ChampionData.ChampSpell;
-import com.jt.getdunked.ChampionData.ChampStats;
 import com.jt.getdunked.ChampionData.Champion;
 import com.jt.getdunked.ChampionData.Champions;
-import com.jt.getdunked.ChampionData.EnemyTips;
-import com.jt.getdunked.ChampionData.Lore;
-import com.jt.getdunked.ChampionData.Partype;
-import com.jt.getdunked.ChampionData.RecommendedItems;
-import com.jt.getdunked.ChampionData.Skins;
-import com.jt.getdunked.ChampionData.Tags;
 
 public class MainActivity extends Activity implements
 		NavigationDrawerFragment.NavigationDrawerCallbacks {
@@ -216,6 +208,7 @@ public class MainActivity extends Activity implements
 		private ChampIds champIds;
 		private GridView gvChamps;
 		private List<Champion> champList = new ArrayList<Champion>();
+		long startTimeMillis;
 
 		private SetBlurbs(Context c, ChampIds champIds, GridView gv) {
 			cxt = c;
@@ -225,119 +218,131 @@ public class MainActivity extends Activity implements
 
 		@Override
 		protected Void doInBackground(Void... params) {
-
-			DatabaseHelper db = new DatabaseHelper(cxt);
-
-			for (Champions champ : champIds.getChampions()) {
-
-				Blurb blurb = JsonUtil
-						.fromJsonUrl(
-								"https://prod.api.pvp.net/api/lol/static-data/na/v1.2/champion/"
-										+ champ.getId()
-										+ "?champData=blurb&api_key=762d01c9-8cf4-4dc9-8eff-aa26c92685da",
-								Blurb.class);
-				AllyTips allyTips = JsonUtil
-						.fromJsonUrl(
-								"https://prod.api.pvp.net/api/lol/static-data/na/v1.2/champion/"
-										+ champ.getId()
-										+ "?champData=allytips&api_key=762d01c9-8cf4-4dc9-8eff-aa26c92685da",
-								AllyTips.class);
-
-				EnemyTips enemyTips = JsonUtil
-						.fromJsonUrl(
-								"https://prod.api.pvp.net/api/lol/static-data/na/v1.2/champion/"
-										+ champ.getId()
-										+ "?champData=enemytips&api_key=762d01c9-8cf4-4dc9-8eff-aa26c92685da",
-								EnemyTips.class);
-
-				ChampInfo info = JsonUtil
-						.fromJsonUrl(
-								"https://prod.api.pvp.net/api/lol/static-data/na/v1.2/champion/"
-										+ champ.getId()
-										+ "?champData=info&api_key=762d01c9-8cf4-4dc9-8eff-aa26c92685da",
-								ChampInfo.class);
-				Lore lore = JsonUtil
-						.fromJsonUrl(
-								"https://prod.api.pvp.net/api/lol/static-data/na/v1.2/champion/"
-										+ champ.getId()
-										+ "?champData=lore&api_key=762d01c9-8cf4-4dc9-8eff-aa26c92685da",
-								Lore.class);
-
-				Partype partype = JsonUtil
-						.fromJsonUrl(
-								"https://prod.api.pvp.net/api/lol/static-data/na/v1.2/champion/"
-										+ champ.getId()
-										+ "?champData=partype&api_key=762d01c9-8cf4-4dc9-8eff-aa26c92685da",
-								Partype.class);
-
-				ChampPassive passive = JsonUtil
-						.fromJsonUrl(
-								"https://prod.api.pvp.net/api/lol/static-data/na/v1.2/champion/"
-										+ champ.getId()
-										+ "?champData=passive&api_key=762d01c9-8cf4-4dc9-8eff-aa26c92685da",
-								ChampPassive.class);
-
-				RecommendedItems recommended = JsonUtil
-						.fromJsonUrl(
-								"https://prod.api.pvp.net/api/lol/static-data/na/v1.2/champion/"
-										+ champ.getId()
-										+ "?champData=recommended&api_key=762d01c9-8cf4-4dc9-8eff-aa26c92685da",
-								RecommendedItems.class);
-				ChampSkins skins = JsonUtil
-						.fromJsonUrl(
-								"https://prod.api.pvp.net/api/lol/static-data/na/v1.2/champion/"
-										+ champ.getId()
-										+ "?champData=skins&api_key=762d01c9-8cf4-4dc9-8eff-aa26c92685da",
-								ChampSkins.class);
-
-				ChampSpell spell = JsonUtil
-						.fromJsonUrl(
-								"https://prod.api.pvp.net/api/lol/static-data/na/v1.2/champion/"
-										+ champ.getId()
-										+ "?champData=spells&api_key=762d01c9-8cf4-4dc9-8eff-aa26c92685da",
-								ChampSpell.class);
-
-				ChampStats stats = JsonUtil
-						.fromJsonUrl(
-								"https://prod.api.pvp.net/api/lol/static-data/na/v1.2/champion/"
-										+ champ.getId()
-										+ "?champData=stats&api_key=762d01c9-8cf4-4dc9-8eff-aa26c92685da",
-								ChampStats.class);
-				Log.w("stats", stats.toString());
-
-				Tags tags = JsonUtil
-						.fromJsonUrl(
-								"https://prod.api.pvp.net/api/lol/static-data/na/v1.2/champion/"
-										+ champ.getId()
-										+ "?champData=tags&api_key=762d01c9-8cf4-4dc9-8eff-aa26c92685da",
-								Tags.class);
-
-				Champion champion = new Champion();
-
-				champion.setTags(tags.getTags());
-				champion.setStats(stats.getStats());
-				champion.setSpells(spell.getSpells());
-				champion.setSkins(skins.getSkins());
-				champion.setRecommended(recommended.getRecommended());
-				champion.setPassive(passive.getPassive());
-				champion.setPartype(partype.getPartype());
-				champion.setLore(lore.getLore());
-				champion.setInfo(info.getInfo());
-				champion.setAllytips(allyTips.getAllytips());
-				champion.setEnemytips(enemyTips.getEnemytips());
-				champion.setBlurb(blurb.getBlurb());
-				champion.setId(champ.getId());
-				champion.setKey(tags.getKey());
-				champion.setName(blurb.getName());
-				champion.setTitle(blurb.getTitle());
-
-				db.addChampion(champion);
-				champList.add(champion);
-
-				Log.w("Champion Added", "Champion Added: " + champion.getName());
-
+			
+			if (!checkDatabase(cxt)) {
+				try {
+					copyDatabase(cxt);
+					Log.w("Database Helper", "Databased was copied from assets!");
+					
+				} catch (IOException e) {
+					throw new Error("Error copying Database: " + e.getMessage());
+				}
 			}
 
+			DatabaseHelper db = new DatabaseHelper(cxt);
+			startTimeMillis = System.currentTimeMillis();
+			for (Champions champ : champIds.getChampions()) {
+//
+//				Blurb blurb = JsonUtil
+//						.fromJsonUrl(
+//								"https://prod.api.pvp.net/api/lol/static-data/na/v1.2/champion/"
+//										+ champ.getId()
+//										+ "?champData=blurb&api_key=762d01c9-8cf4-4dc9-8eff-aa26c92685da",
+//								Blurb.class);
+//				AllyTips allyTips = JsonUtil
+//						.fromJsonUrl(
+//								"https://prod.api.pvp.net/api/lol/static-data/na/v1.2/champion/"
+//										+ champ.getId()
+//										+ "?champData=allytips&api_key=762d01c9-8cf4-4dc9-8eff-aa26c92685da",
+//								AllyTips.class);
+//
+//				EnemyTips enemyTips = JsonUtil
+//						.fromJsonUrl(
+//								"https://prod.api.pvp.net/api/lol/static-data/na/v1.2/champion/"
+//										+ champ.getId()
+//										+ "?champData=enemytips&api_key=762d01c9-8cf4-4dc9-8eff-aa26c92685da",
+//								EnemyTips.class);
+//
+//				ChampInfo info = JsonUtil
+//						.fromJsonUrl(
+//								"https://prod.api.pvp.net/api/lol/static-data/na/v1.2/champion/"
+//										+ champ.getId()
+//										+ "?champData=info&api_key=762d01c9-8cf4-4dc9-8eff-aa26c92685da",
+//								ChampInfo.class);
+//				Lore lore = JsonUtil
+//						.fromJsonUrl(
+//								"https://prod.api.pvp.net/api/lol/static-data/na/v1.2/champion/"
+//										+ champ.getId()
+//										+ "?champData=lore&api_key=762d01c9-8cf4-4dc9-8eff-aa26c92685da",
+//								Lore.class);
+//
+//				Partype partype = JsonUtil
+//						.fromJsonUrl(
+//								"https://prod.api.pvp.net/api/lol/static-data/na/v1.2/champion/"
+//										+ champ.getId()
+//										+ "?champData=partype&api_key=762d01c9-8cf4-4dc9-8eff-aa26c92685da",
+//								Partype.class);
+//
+//				ChampPassive passive = JsonUtil
+//						.fromJsonUrl(
+//								"https://prod.api.pvp.net/api/lol/static-data/na/v1.2/champion/"
+//										+ champ.getId()
+//										+ "?champData=passive&api_key=762d01c9-8cf4-4dc9-8eff-aa26c92685da",
+//								ChampPassive.class);
+//
+//				RecommendedItems recommended = JsonUtil
+//						.fromJsonUrl(
+//								"https://prod.api.pvp.net/api/lol/static-data/na/v1.2/champion/"
+//										+ champ.getId()
+//										+ "?champData=recommended&api_key=762d01c9-8cf4-4dc9-8eff-aa26c92685da",
+//								RecommendedItems.class);
+//				ChampSkins skins = JsonUtil
+//						.fromJsonUrl(
+//								"https://prod.api.pvp.net/api/lol/static-data/na/v1.2/champion/"
+//										+ champ.getId()
+//										+ "?champData=skins&api_key=762d01c9-8cf4-4dc9-8eff-aa26c92685da",
+//								ChampSkins.class);
+//
+//				ChampSpell spell = JsonUtil
+//						.fromJsonUrl(
+//								"https://prod.api.pvp.net/api/lol/static-data/na/v1.2/champion/"
+//										+ champ.getId()
+//										+ "?champData=spells&api_key=762d01c9-8cf4-4dc9-8eff-aa26c92685da",
+//								ChampSpell.class);
+//
+//				ChampStats stats = JsonUtil
+//						.fromJsonUrl(
+//								"https://prod.api.pvp.net/api/lol/static-data/na/v1.2/champion/"
+//										+ champ.getId()
+//										+ "?champData=stats&api_key=762d01c9-8cf4-4dc9-8eff-aa26c92685da",
+//								ChampStats.class);
+//				Log.w("stats", stats.toString());
+//
+//				Tags tags = JsonUtil
+//						.fromJsonUrl(
+//								"https://prod.api.pvp.net/api/lol/static-data/na/v1.2/champion/"
+//										+ champ.getId()
+//										+ "?champData=tags&api_key=762d01c9-8cf4-4dc9-8eff-aa26c92685da",
+//								Tags.class);
+//
+//				Champion champion = new Champion();
+//
+//				champion.setTags(tags.getTags());
+//				champion.setStats(stats.getStats());
+//				champion.setSpells(spell.getSpells());
+//				champion.setSkins(skins.getSkins());
+//				champion.setRecommended(recommended.getRecommended());
+//				champion.setPassive(passive.getPassive());
+//				champion.setPartype(partype.getPartype());
+//				champion.setLore(lore.getLore());
+//				champion.setInfo(info.getInfo());
+//				champion.setAllytips(allyTips.getAllytips());
+//				champion.setEnemytips(enemyTips.getEnemytips());
+//				champion.setBlurb(blurb.getBlurb());
+//				champion.setId(champ.getId());
+//				champion.setKey(tags.getKey());
+//				champion.setName(blurb.getName());
+//				champion.setTitle(blurb.getTitle());
+//
+//				db.addChampion(champion);
+				Champion champion = db.getChampionName(champ.getId());
+				champList.add(champion);
+
+				
+				Log.w("Champion Found", "Champion Found: " + champion.getName());
+				//Log.w("Tips", "Tips: " + champion.getName() + "// " + champion.getAllytips().toString());
+
+			}
 			return null;
 		}
 
@@ -354,12 +359,47 @@ public class MainActivity extends Activity implements
 			// db.updateChampion(champion);
 			// i++;
 			// }
-
+			long totalTime = System.currentTimeMillis() - startTimeMillis;
+			Log.w("TIMER", "Time to get from db: " + totalTime / 1000.0f + " seconds");
 			ImageAdapter adapter = new ImageAdapter(cxt, champList);
 			gvChamps.setAdapter(adapter);
 
 			super.onPostExecute(result);
 		}
+	}
+	
+	private static void copyDatabase(Context dbContext) throws IOException {
+		InputStream myInput = dbContext.getAssets().open("championManager");
+		String outFileName = dbContext.getDatabasePath("championManager").toString();
+		OutputStream myOutput = new FileOutputStream(outFileName);
+
+		byte[] buffer = new byte[1024];
+		int length;
+		while ((length = myInput.read(buffer)) > 0) {
+			myOutput.write(buffer, 0, length);
+		}
+
+		myOutput.flush();
+		myOutput.close();
+		myInput.close();
+	}
+
+	private static boolean checkDatabase(Context cxt) {
+		SQLiteDatabase checkDB = null;
+		boolean exist = false;
+		try {
+			String dbPath = cxt.getDatabasePath("championManager").toString();
+			checkDB = SQLiteDatabase.openDatabase(dbPath, null,
+					SQLiteDatabase.OPEN_READONLY);
+		} catch (SQLiteException e) {
+			Log.v("db log", "database does't exist");
+		}
+
+		if (checkDB != null) {
+			exist = true;
+			checkDB.close();
+		}
+		return exist;
 	}
 
 }

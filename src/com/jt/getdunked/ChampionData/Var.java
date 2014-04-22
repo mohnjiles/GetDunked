@@ -11,7 +11,7 @@ public class Var {
 	@Expose
 	private String link;
 	@Expose
-	private List<Double> coeff;
+	private Double coeff;
 
 	public String getKey() {
 		return key;
@@ -29,11 +29,11 @@ public class Var {
 		this.link = link;
 	}
 
-	public List<Double> getCoeff() {
+	public Double getCoeff() {
 		return coeff;
 	}
 
-	public void setCoeff(List<Double> coeff) {
+	public void setCoeff(Double coeff) {
 		this.coeff = coeff;
 	}
 

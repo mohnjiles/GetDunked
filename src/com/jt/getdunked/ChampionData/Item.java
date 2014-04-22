@@ -1,31 +1,25 @@
-
 package com.jt.getdunked.ChampionData;
-
-
-import com.google.gson.annotations.Expose;
-
 
 public class Item {
 
-    
-    private Integer id;
-    
-    private Integer count;
+	private Integer id;
 
-    public Integer getId() {
-        return id;
-    }
+	private Integer count;
 
-    public void setId(Integer id) {
-        this.id = id;
-    }
+	public Integer getId() {
+		return id;
+	}
 
-    public Integer getCount() {
-        return count;
-    }
+	public void setId(Integer id) {
+		this.id = id;
+	}
 
-    public void setCount(Integer count) {
-        this.count = count;
-    }
+	public Integer getCount() {
+		return count;
+	}
+
+	public void setCount(Integer count) {
+		this.count = count;
+	}
 
 }

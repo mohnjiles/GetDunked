@@ -1,7 +1,6 @@
 
 package com.jt.getdunked.ChampionData;
 
-import java.util.List;
 
 public class Lore{
    	private Number id;

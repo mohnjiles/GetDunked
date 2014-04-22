@@ -1,7 +1,6 @@
 
 package com.jt.getdunked.ChampionData;
 
-import java.util.List;
 
 public class ChampPassive{
    	private Number id;

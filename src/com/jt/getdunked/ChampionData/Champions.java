@@ -1,7 +1,6 @@
 
 package com.jt.getdunked.ChampionData;
 
-import com.google.gson.annotations.Expose;
 
 
 public class Champions {

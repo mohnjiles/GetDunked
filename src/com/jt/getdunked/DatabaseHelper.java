@@ -1,5 +1,9 @@
 package com.jt.getdunked;
 
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -8,7 +12,9 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
 
 import com.jt.getdunked.ChampionData.Blocks;
 import com.jt.getdunked.ChampionData.Champion;
@@ -18,11 +24,12 @@ import com.jt.getdunked.ChampionData.Passive;
 import com.jt.getdunked.ChampionData.Recommended;
 import com.jt.getdunked.ChampionData.Skins;
 import com.jt.getdunked.ChampionData.Spell;
+import com.jt.getdunked.ChampionData.Stats;
 import com.jt.getdunked.ChampionData.Var;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
 
-	private static final int DATABASE_VERSION = 29;
+	private static final int DATABASE_VERSION = 31;
 	private static final String DATABASE_NAME = "championManager";
 
 	private static final String TABLE_CHAMPIONS = "champions";
@@ -86,7 +93,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 	private static final String KEY_COSTBURN = "costBurn";
 	private static final String KEY_RANGEBURN = "rangeBurn";
 	private static final String KEY_SPELL_RESOURCE = "resource";
-
 	private static final String KEY_VARKEY_0 = "varKey_0";
 	private static final String KEY_VARKEY_1 = "varKey_1";
 	private static final String KEY_VARKEY_2 = "varKey_2";
@@ -126,8 +132,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 	private static final String KEY_MOVESPEED = "movespeed";
 
 	public DatabaseHelper(Context context) {
-		super(context, DATABASE_NAME, null, DATABASE_VERSION);
-
+		super(context, DATABASE_NAME, null, DATABASE_VERSION);		
 	}
 
 	public void addChampion(Champion champ) {
@@ -153,29 +158,47 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
 		SQLiteDatabase db = this.getReadableDatabase();
 
-		Cursor champCursor = db.query(TABLE_CHAMPIONS, new String[] { KEY_ID,
-				KEY_NAME, KEY_TITLE, KEY_TAGS, KEY_KEY, KEY_BLURB, KEY_LORE,
-				KEY_RESOURCE }, KEY_ID + " = ?",
-				new String[] { String.valueOf(id) }, null, null, null, null);
+		// Cursor champCursor = db.query(TABLE_CHAMPIONS, new String[] { KEY_ID,
+		// KEY_NAME, KEY_TITLE, KEY_TAGS, KEY_KEY, KEY_BLURB, KEY_LORE,
+		// KEY_RESOURCE }, KEY_ID + " = ?",
+		// new String[] { String.valueOf(id) }, null, null, null, null);
+
+		Cursor champCursor = db.rawQuery("SELECT * FROM " + TABLE_CHAMPIONS
+				+ " WHERE " + KEY_ID + " = ?",
+				new String[] { String.valueOf(id) });
 
 		if (champCursor != null) {
 			champCursor.moveToFirst();
 		}
 
-		Cursor tipsCursor = db.query(TABLE_TIPS, new String[] { KEY_ID,
-				KEY_ALLYTIPS, KEY_ENEMYTIPS }, KEY_ID + " = ?",
-				new String[] { String.valueOf(id) }, null, null, null, null);
+		// Cursor tipsCursor = db.query(TABLE_TIPS, new String[] { KEY_ID,
+		// KEY_ALLYTIPS, KEY_ENEMYTIPS }, KEY_ID + " = ?",
+		// new String[] { String.valueOf(id) }, null, null, null, null);
 
-		if (tipsCursor != null) {
-			tipsCursor.moveToFirst();
+		Cursor tipsCursor = db.rawQuery("SELECT * FROM " + TABLE_TIPS
+				+ " WHERE " + KEY_ID + " = ?",
+				new String[] { String.valueOf(id) });
+
+		List<String> tipsList = new ArrayList<String>();
+		List<String> enemyTipsList = new ArrayList<String>();
+
+		if (tipsCursor.moveToFirst()) {
+			tipsList = Arrays.asList(tipsCursor.getString(1).split("---"));
+			enemyTipsList = Arrays.asList(tipsCursor.getString(2).split("---"));
+		} else {
+			Log.w("DATABASE HELPER", "tipsCursor couldn't move to first!");
 		}
 
 		Cursor passiveCursor = db.query(TABLE_PASSIVE, new String[] { KEY_ID,
 				KEY_PASSIVE_DESCRIPTION, KEY_PASSIVE_NAME }, KEY_ID + " = ?",
 				new String[] { String.valueOf(id) }, null, null, null, null);
 
-		if (passiveCursor != null) {
-			passiveCursor.moveToFirst();
+		Passive passive = new Passive();
+		if (passiveCursor.moveToFirst()) {
+			passive.setSanitizedDescription(passiveCursor.getString(1));
+			passive.setName(passiveCursor.getString(2));
+		} else {
+			Log.w("DATABASE HELPER", "GET PASSIVE FAIL");
 		}
 
 		Cursor infoCursor = db.query(TABLE_INFO, new String[] { KEY_ID,
@@ -199,14 +222,173 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
 				skinList.add(skin);
 			} while (skinsCursor.moveToNext());
+		} else {
+			Log.w("DATABASE HELPER", "skinsCursor couldn't move to first!");
 		}
 
-		Passive passive = new Passive();
-		passive.setSanitizedDescription(passiveCursor.getString(1));
-		passive.setName(passiveCursor.getString(2));
+		Cursor recommendedCursor = db.query(TABLE_RECOMMENDED, new String[] {
+				KEY_ID, KEY_MAP, KEY_TITLE, KEY_MODE, KEY_STARTING_0,
+				KEY_STARTING_1, KEY_STARTING_2, KEY_STARTING_3, KEY_STARTING_4,
+				KEY_ESSENTIAL_0, KEY_ESSENTIAL_1, KEY_ESSENTIAL_2,
+				KEY_ESSENTIAL_3, KEY_ESSENTIAL_4, KEY_OFFENSIVE_0,
+				KEY_OFFENSIVE_1, KEY_OFFENSIVE_2, KEY_OFFENSIVE_3,
+				KEY_OFFENSIVE_4, KEY_DEFENSIVE_0, KEY_DEFENSIVE_1,
+				KEY_DEFENSIVE_2, KEY_DEFENSIVE_3, KEY_DEFENSIVE_4 }, KEY_ID
+				+ " = ?", new String[] { String.valueOf(id) }, null, null,
+				null, null);
+
+		List<Recommended> listRecommended = new ArrayList<Recommended>();
+
+		if (recommendedCursor.moveToFirst()) {
+			do {
+				Recommended recommended = new Recommended();
+				recommended.setMap(recommendedCursor.getString(1));
+				recommended.setTitle(recommendedCursor.getString(2));
+				recommended.setMode(recommendedCursor.getString(3));
+				List<Blocks> listBlocks = new ArrayList<Blocks>();
+				List<Item> listStartingItems = new ArrayList<Item>();
+				List<Item> listEssentialItems = new ArrayList<Item>();
+				List<Item> listDefensiveItems = new ArrayList<Item>();
+				List<Item> listOffensiveItems = new ArrayList<Item>();
+
+				for (int i = 0; i < 5; i++) {
+					Item item = new Item();
+					if (recommendedCursor.getString(i + 4) != null) {
+						item.setId(Integer.parseInt(recommendedCursor
+								.getString(i + 4)));
+					}
+					listStartingItems.add(item);
+				}
+				for (int i = 0; i < 5; i++) {
+					Item item = new Item();
+					if (recommendedCursor.getString(i + 9) != null) {
+						item.setId(Integer.parseInt(recommendedCursor
+								.getString(i + 9)));
+					}
+					listEssentialItems.add(item);
+				}
+				for (int i = 0; i < 5; i++) {
+					Item item = new Item();
+					if (recommendedCursor.getString(i + 14) != null) {
+						item.setId(Integer.parseInt(recommendedCursor
+								.getString(i + 14)));
+					}
+					listOffensiveItems.add(item);
+				}
+				for (int i = 0; i < 5; i++) {
+					Item item = new Item();
+					if (recommendedCursor.getString(i + 19) != null) {
+						item.setId(Integer.parseInt(recommendedCursor
+								.getString(i + 19)));
+					}
+					listDefensiveItems.add(item);
+				}
+
+				Blocks startingBlocks = new Blocks();
+				startingBlocks.setItems(listStartingItems);
+				startingBlocks.setType("starting");
+				listBlocks.add(startingBlocks);
+
+				Blocks essentialBlocks = new Blocks();
+				essentialBlocks.setItems(listEssentialItems);
+				essentialBlocks.setType("essential");
+				listBlocks.add(essentialBlocks);
+
+				Blocks defensiveBlocks = new Blocks();
+				defensiveBlocks.setItems(listDefensiveItems);
+				defensiveBlocks.setType("essential");
+				listBlocks.add(defensiveBlocks);
+
+				Blocks offensiveBlocks = new Blocks();
+				offensiveBlocks.setItems(listOffensiveItems);
+				offensiveBlocks.setType("essential");
+				listBlocks.add(offensiveBlocks);
+
+				recommended.setBlocks(listBlocks);
+				listRecommended.add(recommended);
+
+			} while (recommendedCursor.moveToNext());
+		} else {
+			Log.w("DATABASE HELPER",
+					"recommendedCursor couldn't move to first!");
+		}
+
+		Cursor statsCursor = db.query(TABLE_STATS, new String[] { KEY_ID,
+				KEY_ARMOR, KEY_ARMOR_PER_LEVEL, KEY_ATTACK_RANGE,
+				KEY_ATTACK_SPEED_OFFSET, KEY_ATTACK_SPEED_PER_LEVEL,
+				KEY_ATTACK_DAMAGE, KEY_ATTACK_DAMAGE_PER_LEVEL, KEY_CRIT,
+				KEY_CRIT_PER_LEVEL, KEY_MP, KEY_MP_PER_LEVEl, KEY_MP_REGEN,
+				KEY_MP_REGEN_PER_LEVEL, KEY_HP, KEY_HP_PER_LEVEL, KEY_HP_REGEN,
+				KEY_HP_REGEN_PER_LEVEL, KEY_MAGIC_RES, KEY_MAGIC_RES_PER_LEVEL,
+				KEY_MOVESPEED }, KEY_ID + " = ?",
+				new String[] { String.valueOf(id) }, null, null, null, null);
+
+		if (statsCursor != null) {
+			statsCursor.moveToFirst();
+		}
+
+		Stats stats = new Stats();
+		stats.setArmor(Double.parseDouble(statsCursor.getString(1)));
+		stats.setArmorperlevel(Double.parseDouble(statsCursor.getString(2)));
+		stats.setAttackrange(Double.parseDouble(statsCursor.getString(3)));
+		stats.setAttackspeedoffset(Double.parseDouble(statsCursor.getString(4)));
+		stats.setAttackspeedperlevel(Double.parseDouble(statsCursor
+				.getString(5)));
+		stats.setAttackdamage(Double.parseDouble(statsCursor.getString(6)));
+		stats.setAttackdamageperlevel(Double.parseDouble(statsCursor
+				.getString(7)));
+		stats.setCrit(Double.parseDouble(statsCursor.getString(8)));
+		stats.setCritperlevel(Double.parseDouble(statsCursor.getString(9)));
+		stats.setMp(Double.parseDouble(statsCursor.getString(10)));
+		stats.setMpperlevel(Double.parseDouble(statsCursor.getString(11)));
+		stats.setMpregen(Double.parseDouble(statsCursor.getString(12)));
+		stats.setMpregenperlevel(Double.parseDouble(statsCursor.getString(13)));
+		stats.setHp(Double.parseDouble(statsCursor.getString(14)));
+		stats.setHpperlevel(Double.parseDouble(statsCursor.getString(15)));
+		stats.setHpregen(Double.parseDouble(statsCursor.getString(16)));
+		stats.setHpregenperlevel(Double.parseDouble(statsCursor.getString(17)));
+		stats.setSpellblock(Double.parseDouble(statsCursor.getString(18)));
+		stats.setSpellblockperlevel(Double.parseDouble(statsCursor
+				.getString(19)));
+		stats.setMovespeed(Double.parseDouble(statsCursor.getString(20)));
+
+		Cursor spellsCursor = db.rawQuery("SELECT * FROM " + TABLE_SPELLS
+				+ " WHERE " + KEY_ID + " = ?",
+				new String[] { String.valueOf(id) });
+		
+		List<Spell> listSpells = new ArrayList<Spell>();
+		
+		if (spellsCursor.moveToFirst()) {
+			do {
+				Spell spell = new Spell();
+				spell.setName(spellsCursor.getString(1));
+				spell.setSanitizedDescription(spellsCursor.getString(2));
+				spell.setSanitizedTooltip(spellsCursor.getString(3));
+				spell.setCooldownBurn(spellsCursor.getString(4));
+				spell.setEffectBurn(Arrays.asList(spellsCursor.getString(5).split(",")));
+				spell.setCostBurn(spellsCursor.getString(6));
+				spell.setRangeBurn(spellsCursor.getString(7));
+				spell.setResource(spellsCursor.getString(8));
+
+				List<Var> varList = new ArrayList<Var>();
+				for (int i = 0; i < 5; i++) {
+					Var var = new Var();
+					var.setKey(spellsCursor.getString(i + 9));
+					var.setLink(spellsCursor.getString(i + 14));
+					var.setCoeff(Double.parseDouble(spellsCursor.getString(i + 19)));
+					varList.add(var);
+				}
+				
+				spell.setVars(varList);
+				
+				listSpells.add(spell);
+			} while (spellsCursor.moveToNext());
+		}
+		
+		
 
 		Champion champ = new Champion();
-
+		
 		champ.setId(Integer.parseInt(champCursor.getString(0)));
 		champ.setTags(new ArrayList<String>(Arrays.asList(champCursor
 				.getString(3).split(","))));
@@ -214,20 +396,56 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 		champ.setBlurb(champCursor.getString(5));
 		champ.setLore(champCursor.getString(6));
 		champ.setPartype(champCursor.getString(7));
-		champ.setAllytips(new ArrayList<String>(Arrays.asList(tipsCursor
-				.getString(1).split("---"))));
-		champ.setEnemytips(new ArrayList<String>(Arrays.asList(tipsCursor
-				.getString(2).split("---"))));
+		champ.setAllytips(tipsList);
+		champ.setEnemytips(enemyTipsList);
 		champ.setPassive(passive);
 		champ.setSkins(skinList);
 		champ.setInfo(new Info.Builder(4)
-		.setDefense(Integer.parseInt(infoCursor.getString(1)))
-		.setDifficulty(Integer.parseInt(infoCursor.getString(2)))
-		.build());
+				.setDefense(Integer.parseInt(infoCursor.getString(1)))
+				.setDifficulty(Integer.parseInt(infoCursor.getString(2)))
+				.setAttack(Integer.parseInt(infoCursor.getString(3)))
+				.setMagic(Integer.parseInt(infoCursor.getString(4))).build());
+		champ.setName(champCursor.getString(1));
+		champ.setRecommended(listRecommended);
+		champ.setStats(stats);
+		champ.setTitle(champCursor.getString(2));
+		champ.setSpells(listSpells);
 
 		// for (int i = 0; i < 5; i++) {
 		// Log.w("SQL", cursor.getString(i));
 		// }
+
+		champCursor.close();
+		tipsCursor.close();
+		passiveCursor.close();
+		statsCursor.close();
+		recommendedCursor.close();
+		skinsCursor.close();
+		infoCursor.close();
+		spellsCursor.close();
+
+		db.close();
+
+		return champ;
+	}
+
+	public Champion getChampionName(int id) {
+
+		SQLiteDatabase db = this.getReadableDatabase();
+
+		Cursor cursor = db.rawQuery("SELECT " + KEY_NAME + ", " + KEY_KEY
+				+ " FROM " + TABLE_CHAMPIONS + " WHERE " + KEY_ID + " = ?",
+				new String[] { String.valueOf(id) });
+
+		Champion champ = new Champion();
+		if (cursor.moveToFirst()) {
+			champ.setName(cursor.getString(0));
+			champ.setKey(cursor.getString(1));
+		}
+
+		cursor.close();
+
+		db.close();
 
 		return champ;
 	}
@@ -267,6 +485,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
 			} while (cursor.moveToNext());
 		}
+
+		db.close();
 
 		return champList;
 	}
@@ -352,6 +572,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 			// + champ.getEnemytips().get(1).toString() + "---");
 		}
 
+		values.put(KEY_ID, champ.getId());
 		db.insert(TABLE_TIPS, null, values);
 	}
 
@@ -470,7 +691,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 			for (Var var : spell.getVars()) {
 				values.put("varKey_" + i, var.getKey());
 				values.put("varLink_" + i, var.getLink());
-				values.put("varCoeff_" + i, var.getCoeff().get(0));
+				values.put("varCoeff_" + i, var.getCoeff());
 				i++;
 			}
 
@@ -625,5 +846,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 		onCreate(db);
 
 	}
+
+
 
 }

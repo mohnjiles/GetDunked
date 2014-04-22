@@ -1,7 +1,5 @@
 package com.jt.getdunked.ChampionData;
 
-import java.util.List;
-
 public class Info {
 	private Number attack;
 	private Number defense;
