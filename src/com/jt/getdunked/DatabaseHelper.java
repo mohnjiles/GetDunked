@@ -1,9 +1,5 @@
 package com.jt.getdunked;
 
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -12,7 +8,6 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
@@ -30,7 +25,7 @@ import com.jt.getdunked.ChampionData.Var;
 public class DatabaseHelper extends SQLiteOpenHelper {
 
 	private static final int DATABASE_VERSION = 31;
-	private static final String DATABASE_NAME = "championManager";
+	public static final String DATABASE_NAME = "championManager";
 
 	private static final String TABLE_CHAMPIONS = "champions";
 	private static final String KEY_ID = "id";
@@ -135,6 +130,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 		super(context, DATABASE_NAME, null, DATABASE_VERSION);		
 	}
 
+	// Splits a Champion object up into the correct tables
 	public void addChampion(Champion champ) {
 
 		SQLiteDatabase db = this.getWritableDatabase();
@@ -155,13 +151,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 	public Champion getChampion(int id) {
 
 		List<Skins> skinList = new ArrayList<Skins>();
-
+		List<String> tipsList = new ArrayList<String>();
+		List<String> enemyTipsList = new ArrayList<String>();
+		List<Recommended> listRecommended = new ArrayList<Recommended>();
+		List<Spell> listSpells = new ArrayList<Spell>();
+		
+		Passive passive = new Passive();
 		SQLiteDatabase db = this.getReadableDatabase();
-
-		// Cursor champCursor = db.query(TABLE_CHAMPIONS, new String[] { KEY_ID,
-		// KEY_NAME, KEY_TITLE, KEY_TAGS, KEY_KEY, KEY_BLURB, KEY_LORE,
-		// KEY_RESOURCE }, KEY_ID + " = ?",
-		// new String[] { String.valueOf(id) }, null, null, null, null);
 
 		Cursor champCursor = db.rawQuery("SELECT * FROM " + TABLE_CHAMPIONS
 				+ " WHERE " + KEY_ID + " = ?",
@@ -171,16 +167,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 			champCursor.moveToFirst();
 		}
 
-		// Cursor tipsCursor = db.query(TABLE_TIPS, new String[] { KEY_ID,
-		// KEY_ALLYTIPS, KEY_ENEMYTIPS }, KEY_ID + " = ?",
-		// new String[] { String.valueOf(id) }, null, null, null, null);
-
 		Cursor tipsCursor = db.rawQuery("SELECT * FROM " + TABLE_TIPS
 				+ " WHERE " + KEY_ID + " = ?",
 				new String[] { String.valueOf(id) });
-
-		List<String> tipsList = new ArrayList<String>();
-		List<String> enemyTipsList = new ArrayList<String>();
 
 		if (tipsCursor.moveToFirst()) {
 			tipsList = Arrays.asList(tipsCursor.getString(1).split("---"));
@@ -193,7 +182,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 				KEY_PASSIVE_DESCRIPTION, KEY_PASSIVE_NAME }, KEY_ID + " = ?",
 				new String[] { String.valueOf(id) }, null, null, null, null);
 
-		Passive passive = new Passive();
+		
 		if (passiveCursor.moveToFirst()) {
 			passive.setSanitizedDescription(passiveCursor.getString(1));
 			passive.setName(passiveCursor.getString(2));
@@ -236,8 +225,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 				KEY_DEFENSIVE_2, KEY_DEFENSIVE_3, KEY_DEFENSIVE_4 }, KEY_ID
 				+ " = ?", new String[] { String.valueOf(id) }, null, null,
 				null, null);
-
-		List<Recommended> listRecommended = new ArrayList<Recommended>();
 
 		if (recommendedCursor.moveToFirst()) {
 			do {
@@ -356,8 +343,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 				+ " WHERE " + KEY_ID + " = ?",
 				new String[] { String.valueOf(id) });
 		
-		List<Spell> listSpells = new ArrayList<Spell>();
-		
 		if (spellsCursor.moveToFirst()) {
 			do {
 				Spell spell = new Spell();
@@ -462,24 +447,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 			do {
 				Champion champion = new Champion();
 				champion.setId(Integer.parseInt(cursor.getString(0)));
-				champion.setKey(cursor.getString(1));
-
-				String[] allySplit = cursor.getString(3).split("---");
-				String[] enemySplit = cursor.getString(2).split("---");
-				List<String> allyTips = new ArrayList<String>();
-				List<String> enemyTips = new ArrayList<String>();
-
-				for (String tip : allySplit) {
-					allyTips.add(tip);
-				}
-				for (String tip : enemySplit) {
-					enemyTips.add(tip);
-				}
-
-				champion.setAllytips(allyTips);
-				champion.setName(cursor.getString(4));
-				champion.setTitle(cursor.getString(5));
-				champion.setBlurb(cursor.getString(6));
+				champion.setKey(cursor.getString(4));
+				champion.setName(cursor.getString(1));
+				champion.setTitle(cursor.getString(2));
+				champion.setBlurb(cursor.getString(5));
 
 				champList.add(champion);
 
