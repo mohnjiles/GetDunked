@@ -8,7 +8,6 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
 import com.jt.getdunked.ChampionData.Blocks;
@@ -21,8 +20,9 @@ import com.jt.getdunked.ChampionData.Skins;
 import com.jt.getdunked.ChampionData.Spell;
 import com.jt.getdunked.ChampionData.Stats;
 import com.jt.getdunked.ChampionData.Var;
+import com.readystatesoftware.sqliteasset.SQLiteAssetHelper;
 
-public class DatabaseHelper extends SQLiteOpenHelper {
+public class DatabaseHelper extends SQLiteAssetHelper {
 
 	private static final int DATABASE_VERSION = 31;
 	public static final String DATABASE_NAME = "championManager";
@@ -127,7 +127,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 	private static final String KEY_MOVESPEED = "movespeed";
 
 	public DatabaseHelper(Context context) {
-		super(context, DATABASE_NAME, null, DATABASE_VERSION);		
+		super(context, DATABASE_NAME, null, DATABASE_VERSION);
 	}
 
 	// Splits a Champion object up into the correct tables
@@ -155,7 +155,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 		List<String> enemyTipsList = new ArrayList<String>();
 		List<Recommended> listRecommended = new ArrayList<Recommended>();
 		List<Spell> listSpells = new ArrayList<Spell>();
-		
+
 		Passive passive = new Passive();
 		SQLiteDatabase db = this.getReadableDatabase();
 
@@ -182,7 +182,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 				KEY_PASSIVE_DESCRIPTION, KEY_PASSIVE_NAME }, KEY_ID + " = ?",
 				new String[] { String.valueOf(id) }, null, null, null, null);
 
-		
 		if (passiveCursor.moveToFirst()) {
 			passive.setSanitizedDescription(passiveCursor.getString(1));
 			passive.setName(passiveCursor.getString(2));
@@ -342,7 +341,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 		Cursor spellsCursor = db.rawQuery("SELECT * FROM " + TABLE_SPELLS
 				+ " WHERE " + KEY_ID + " = ?",
 				new String[] { String.valueOf(id) });
-		
+
 		if (spellsCursor.moveToFirst()) {
 			do {
 				Spell spell = new Spell();
@@ -350,7 +349,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 				spell.setSanitizedDescription(spellsCursor.getString(2));
 				spell.setSanitizedTooltip(spellsCursor.getString(3));
 				spell.setCooldownBurn(spellsCursor.getString(4));
-				spell.setEffectBurn(Arrays.asList(spellsCursor.getString(5).split(",")));
+				spell.setEffectBurn(Arrays.asList(spellsCursor.getString(5)
+						.split(",")));
 				spell.setCostBurn(spellsCursor.getString(6));
 				spell.setRangeBurn(spellsCursor.getString(7));
 				spell.setResource(spellsCursor.getString(8));
@@ -358,22 +358,27 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 				List<Var> varList = new ArrayList<Var>();
 				for (int i = 0; i < 5; i++) {
 					Var var = new Var();
-					var.setKey(spellsCursor.getString(i + 9));
-					var.setLink(spellsCursor.getString(i + 14));
-					var.setCoeff(Double.parseDouble(spellsCursor.getString(i + 19)));
+					if (spellsCursor.getString(i + 9) != null) {
+						var.setKey(spellsCursor.getString(i + 9));
+					}
+					if (spellsCursor.getString(i + 14) != null) {
+						var.setLink(spellsCursor.getString(i + 14));
+					}
+					if (spellsCursor.getString(i + 19) != null) {
+						var.setCoeff(Double.parseDouble(spellsCursor
+								.getString(i + 19)));
+					}
 					varList.add(var);
 				}
-				
+
 				spell.setVars(varList);
-				
+
 				listSpells.add(spell);
 			} while (spellsCursor.moveToNext());
 		}
-		
-		
 
 		Champion champ = new Champion();
-		
+
 		champ.setId(Integer.parseInt(champCursor.getString(0)));
 		champ.setTags(new ArrayList<String>(Arrays.asList(champCursor
 				.getString(3).split(","))));
@@ -438,7 +443,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 	public List<Champion> getAllChampions() {
 		List<Champion> champList = new ArrayList<Champion>();
 
-		String selectQuery = "SELECT * FROM " + TABLE_CHAMPIONS;
+		String selectQuery = "SELECT * FROM " + TABLE_CHAMPIONS + " ORDER BY "
+				+ KEY_ID;
 
 		SQLiteDatabase db = this.getWritableDatabase();
 		Cursor cursor = db.rawQuery(selectQuery, null);
@@ -452,11 +458,25 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 				champion.setTitle(cursor.getString(2));
 				champion.setBlurb(cursor.getString(5));
 
+				Cursor spellsCursor = db.rawQuery("SELECT * FROM "
+						+ TABLE_SPELLS + " WHERE " + KEY_ID + " = ?",
+						new String[] { cursor.getString(0) });
+				
+				List<Spell> spells = new ArrayList<Spell>();
+				if (spellsCursor.moveToFirst()) {
+					do {
+						Spell spell = new Spell();
+						spell.setName(spellsCursor.getString(1));
+						spells.add(spell);
+					} while (spellsCursor.moveToNext());
+				}
+				champion.setSpells(spells);
 				champList.add(champion);
-
+				spellsCursor.close();
 			} while (cursor.moveToNext());
 		}
-
+		
+		cursor.close();
 		db.close();
 
 		return champList;
@@ -510,6 +530,27 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 		db.close();
 	}
 
+	public int getChampionIdByPos(int position) {
+
+		SQLiteDatabase db = this.getReadableDatabase();
+		Cursor cursor = db.rawQuery("SELECT " + KEY_ID + " FROM "
+				+ TABLE_CHAMPIONS + " ORDER BY " + KEY_NAME, null);
+
+		int id = 0;
+
+		if (cursor.moveToPosition(position)) {
+			id = Integer.parseInt(cursor.getString(0));
+			cursor.close();
+			db.close();
+			return id;
+		} else {
+			cursor.close();
+			db.close();
+			return id;
+		}
+
+	}
+
 	private void addTips(Champion champ, SQLiteDatabase db) {
 		ContentValues values = new ContentValues();
 
@@ -545,6 +586,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
 		values.put(KEY_ID, champ.getId());
 		db.insert(TABLE_TIPS, null, values);
+		db.close();
 	}
 
 	private void addChampionBase(Champion champ, SQLiteDatabase db) {
@@ -722,8 +764,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 		db.insert(TABLE_INFO, null, values);
 	}
 
-	@Override
-	public void onCreate(SQLiteDatabase db) {
+	private void createDb(SQLiteDatabase db) {
 		String CREATE_CHAMPIONS_TABLE = "CREATE TABLE " + TABLE_CHAMPIONS + "("
 				+ KEY_ID + " INTEGER PRIMARY KEY," + KEY_NAME + " TEXT,"
 				+ KEY_TITLE + " TEXT," + KEY_TAGS + " TEXT," + KEY_KEY
@@ -814,10 +855,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 		db.execSQL("DROP TABLE IF EXISTS " + TABLE_TIPS);
 
 		// Create tables again
-		onCreate(db);
+		createDb(db);
 
 	}
-
-
 
 }

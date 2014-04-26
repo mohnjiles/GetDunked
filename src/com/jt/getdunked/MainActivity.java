@@ -1,9 +1,7 @@
 package com.jt.getdunked;
 
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import it.gmariotti.cardslib.library.view.CardView;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -12,8 +10,7 @@ import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.content.Context;
-import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteException;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.widget.DrawerLayout;
@@ -23,7 +20,10 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.GridView;
+import android.widget.SearchView;
 
 import com.jt.getdunked.ChampionData.AllyTips;
 import com.jt.getdunked.ChampionData.Blurb;
@@ -55,6 +55,10 @@ public class MainActivity extends Activity implements
 	 * {@link #restoreActionBar()}.
 	 */
 	private CharSequence mTitle;
+	private static SearchView searchItem;
+	private static List<Champion> listChamps = new ArrayList<Champion>();
+	private static ImageAdapter adapter;
+	private DatabaseHelper db;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -68,16 +72,23 @@ public class MainActivity extends Activity implements
 		// Set up the drawer.
 		mNavigationDrawerFragment.setUp(R.id.navigation_drawer,
 				(DrawerLayout) findViewById(R.id.drawer_layout));
+
+		db = new DatabaseHelper(this);
+		listChamps = db.getAllChampions();
+		db.close();
 	}
 
 	@Override
 	public void onNavigationDrawerItemSelected(int position) {
 		// update the main content by replacing fragments
+
+		Bundle args = new Bundle();
+		args.putInt("position", position);
+
 		FragmentManager fragmentManager = getFragmentManager();
-		fragmentManager
-				.beginTransaction()
-				.replace(R.id.container,
-						PlaceholderFragment.newInstance(position + 1)).commit();
+		fragmentManager.beginTransaction()
+				.replace(R.id.container, PlaceholderFragment.newInstance(args))
+				.commit();
 	}
 
 	public void onSectionAttached(int number) {
@@ -109,6 +120,11 @@ public class MainActivity extends Activity implements
 			// decide what to show in the action bar.
 			getMenuInflater().inflate(R.menu.main, menu);
 			restoreActionBar();
+
+			searchItem = (SearchView) menu.findItem(R.id.action_search)
+					.getActionView();
+			searchItem.setOnQueryTextListener(new ChampionSearchListener(
+					listChamps, adapter));
 			return true;
 		}
 		return super.onCreateOptionsMenu(menu);
@@ -132,6 +148,7 @@ public class MainActivity extends Activity implements
 	public static class PlaceholderFragment extends Fragment {
 
 		private GridView gvChamps;
+		private CardView lvCards;
 
 		/**
 		 * The fragment argument representing the section number for this
@@ -142,10 +159,8 @@ public class MainActivity extends Activity implements
 		/**
 		 * Returns a new instance of this fragment for the given section number.
 		 */
-		public static PlaceholderFragment newInstance(int sectionNumber) {
+		public static PlaceholderFragment newInstance(Bundle args) {
 			PlaceholderFragment fragment = new PlaceholderFragment();
-			Bundle args = new Bundle();
-			args.putInt(ARG_SECTION_NUMBER, sectionNumber);
 			fragment.setArguments(args);
 			return fragment;
 		}
@@ -160,10 +175,35 @@ public class MainActivity extends Activity implements
 					false);
 
 			gvChamps = (GridView) rootView.findViewById(R.id.gvChamps);
+			adapter = new ImageAdapter(getActivity(), listChamps);
+			gvChamps.setAdapter(adapter);
 
-			new GetChampionsForGrid(getActivity(), gvChamps).execute();
+			gvChamps.setOnItemClickListener(new OnItemClickListener() {
+
+				@Override
+				public void onItemClick(AdapterView<?> arg0, View arg1,
+						int arg2, long arg3) {
+
+					DatabaseHelper db = new DatabaseHelper(getActivity());
+
+					Log.w("onItemClick", "id: " + db.getChampionIdByPos(arg2));
+
+					Intent intent = new Intent(getActivity(),
+							ChampionActivity.class);
+					intent.putExtra("id", (Integer) arg1.findViewById(R.id.grid_item_image).getTag());
+					startActivity(intent);
+
+					db.close();
+				}
+			});
 
 			return rootView;
+		}
+
+		@Override
+		public void onActivityCreated(Bundle savedInstanceState) {
+
+			super.onActivityCreated(savedInstanceState);
 		}
 
 		@Override
@@ -174,126 +214,47 @@ public class MainActivity extends Activity implements
 		}
 	}
 
-//	static class FetchChamps extends AsyncTask<Void, Void, ChampIds> {
-//
-//		private Context cxt;
-//		private GridView gvChamps;
-//
-//		private FetchChamps(Context c, GridView gv) {
-//			cxt = c;
-//			gvChamps = gv;
-//		}
-//
-//		@Override
-//		protected ChampIds doInBackground(Void... params) {
-//
-//			ChampIds champIds = JsonUtil
-//					.fromJsonUrl(
-//							"https://prod.api.pvp.net/api/lol/na/v1.2/champion?api_key=762d01c9-8cf4-4dc9-8eff-aa26c92685da",
-//							ChampIds.class);
-//
-//			return champIds;
-//		}
-//
-//		// GOTTA GET THE DATA AGAIN BECAUSE DERP
-//		// DO IT PLS
-//		@Override
-//		protected void onPostExecute(ChampIds result) {
-//			// DatabaseHelper db = new DatabaseHelper(cxt);
-//			//
-//			// for (Champions champ : result.getChampions()) {
-//			// champList.add(db.getChampion(champ.getId()));
-//			// }
-//			//
-//			// ImageAdapter adapter = new ImageAdapter(cxt, champList);
-//			// gvChamps.setAdapter(adapter);
-//
-//			new SetBlurbs(cxt, result, gvChamps).execute();
-//
-//			super.onPostExecute(result);
-//		}
-//	}
-
-	static class GetChampionsForGrid extends AsyncTask<Void, Void, List<Champion>> {
+	static class GetChampionsForGrid extends
+			AsyncTask<Void, Void, List<Champion>> {
 
 		private Context cxt;
 		private GridView gvChamps;
+		private CardView lvCards;
 		long startTimeMillis;
 
-		private GetChampionsForGrid(Context c, GridView gv) {
+		private GetChampionsForGrid(Context c, GridView gv, CardView lv) {
 			cxt = c;
 			gvChamps = gv;
+			lvCards = lv;
 		}
 
 		@Override
 		protected List<Champion> doInBackground(Void... params) {
-			
-			if (!checkDatabase(cxt)) {
-				try {
-					copyDatabase(cxt);
-					Log.w("Database Helper", "Databased was copied from assets!");
-					
-				} catch (IOException e) {
-					throw new Error("Error copying Database: " + e.getMessage());
-				}
-			}
 
 			DatabaseHelper db = new DatabaseHelper(cxt);
 			startTimeMillis = System.currentTimeMillis();
-			
+
 			return db.getAllChampions();
 		}
 
 		@Override
 		protected void onPostExecute(List<Champion> result) {
-			
+
 			long totalTime = System.currentTimeMillis() - startTimeMillis;
-			Log.w("TIMER", "Time to get from db: " + totalTime / 1000.0f + " seconds");
-			ImageAdapter adapter = new ImageAdapter(cxt, result);
+			Log.w("TIMER", "Time to get from db: " + totalTime / 1000.0f
+					+ " seconds");
+			listChamps = result;
+			adapter = new ImageAdapter(cxt, result);
 			gvChamps.setAdapter(adapter);
 
 			super.onPostExecute(result);
 		}
 	}
-	
-	private static void copyDatabase(Context dbContext) throws IOException {
-		InputStream myInput = dbContext.getAssets().open("championManager");
-		String outFileName = dbContext.getDatabasePath("championManager").toString();
-		OutputStream myOutput = new FileOutputStream(outFileName);
 
-		byte[] buffer = new byte[1024];
-		int length;
-		while ((length = myInput.read(buffer)) > 0) {
-			myOutput.write(buffer, 0, length);
-		}
-
-		myOutput.flush();
-		myOutput.close();
-		myInput.close();
-	}
-
-	private static boolean checkDatabase(Context cxt) {
-		SQLiteDatabase checkDB = null;
-		boolean exist = false;
-		try {
-			String dbPath = cxt.getDatabasePath("championManager").toString();
-			checkDB = SQLiteDatabase.openDatabase(dbPath, null,
-					SQLiteDatabase.OPEN_READONLY);
-		} catch (SQLiteException e) {
-			Log.v("db log", "database does't exist");
-		}
-
-		if (checkDB != null) {
-			exist = true;
-			checkDB.close();
-		}
-		return exist;
-	}
-	
 	private void addAllChampionsToDatabase(ChampIds champIds) {
-		
+
 		DatabaseHelper db = new DatabaseHelper(this);
-		
+
 		for (Champions champ : champIds.getChampions()) {
 
 			Blurb blurb = JsonUtil
@@ -398,9 +359,9 @@ public class MainActivity extends Activity implements
 			champion.setTitle(blurb.getTitle());
 
 			db.addChampion(champion);
-		
+
 			Log.w("Champion Found", "Champion Found: " + champion.getName());
-		
+
 		}
 	}
 

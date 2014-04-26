@@ -15,8 +15,10 @@ gen/
 local.properties
 .classpath
 .settings/
+assets/fonts
 .loadpath
 *.png
+res/drawable-mdpi
 
 
 # External tool builders

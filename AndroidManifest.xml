@@ -24,6 +24,14 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name="com.jt.getdunked.ChampionActivity"
+            android:label="@string/title_activity_champion"
+            android:parentActivityName="com.jt.getdunked.MainActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.jt.getdunked.MainActivity" />
+        </activity>
     </application>
 
 </manifest>
