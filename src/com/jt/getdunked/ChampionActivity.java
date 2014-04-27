@@ -8,9 +8,11 @@ import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.Intent;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v13.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -19,6 +21,8 @@ import android.view.ViewGroup;
 import android.widget.ExpandableListView;
 import android.widget.ListView;
 import android.widget.TextView;
+import butterknife.ButterKnife;
+import butterknife.InjectView;
 
 import com.jt.getdunked.ChampionData.Champion;
 import com.jt.getdunked.ChampionData.Spell;
@@ -147,11 +151,11 @@ public class ChampionActivity extends Activity implements ActionBar.TabListener 
 			Locale l = Locale.getDefault();
 			switch (position) {
 			case 0:
-				return getString(R.string.title_section1).toUpperCase(l);
+				return "Spells".toUpperCase(l);
 			case 1:
-				return getString(R.string.title_section2).toUpperCase(l);
+				return "Stats".toUpperCase(l);
 			case 2:
-				return getString(R.string.title_section3).toUpperCase(l);
+				return "Lore".toUpperCase(l);
 			}
 			return null;
 		}
@@ -178,29 +182,57 @@ public class ChampionActivity extends Activity implements ActionBar.TabListener 
 			return fragment;
 		}
 
+		@InjectView(R.id.tv_lore)
+		TextView tvLore;
+		@InjectView(R.id.tv_champ_title)
+		TextView tvChampTitle;
+
 		public PlaceholderFragment() {
+
 		}
 
 		@Override
 		public View onCreateView(LayoutInflater inflater, ViewGroup container,
 				Bundle savedInstanceState) {
-			View rootView = inflater.inflate(R.layout.fragment_champion,
-					container, false);
+			View rootView = null;
+
+			Typeface tf = TypefaceCache.get(getActivity().getAssets(),
+					"fonts/Roboto-Light.ttf");
+
+			Intent intent = getActivity().getIntent();
+			final int champId = intent.getIntExtra("id", 1);
+			DatabaseHelper db = new DatabaseHelper(getActivity());
+			Champion champ = db.getChampion(champId);
+
+			db.close();
+
+			getActivity().getActionBar().setTitle(champ.getName());
+			getActivity().getActionBar().setIcon(
+					Utils.getResIdByName(getActivity(), champ.getKey()
+							.toLowerCase(Locale.getDefault()) + "square"));
+
 			int sectionNum = getArguments().getInt(ARG_SECTION_NUMBER);
 			if (sectionNum == 1) {
-				// rootView = inflater.inflate(R.layout.fragment_champion,
-				// container, false);
-				Intent intent = getActivity().getIntent();
-				final int champId = intent.getIntExtra("id", 1);
-				DatabaseHelper db = new DatabaseHelper(getActivity());
-				Champion champ = db.getChampion(champId);
-				
-				ExpandableListView lvSpells = (ExpandableListView) rootView.findViewById(R.id.lv_spells);
-				ExpandableSpellListAdapter adapter = new ExpandableSpellListAdapter(getActivity(), champ);
+
+				rootView = inflater.inflate(R.layout.fragment_champion,
+						container, false);
+
+				ExpandableListView lvSpells = (ExpandableListView) rootView
+						.findViewById(R.id.lv_spells);
+				ExpandableSpellListAdapter adapter = new ExpandableSpellListAdapter(
+						getActivity(), champ);
 				lvSpells.setDividerHeight(0);
 				lvSpells.setDivider(null);
 				lvSpells.setAdapter(adapter);
 
+			} else if (sectionNum == 3) {
+				rootView = inflater.inflate(R.layout.lore_layout, null);
+				ButterKnife.inject(this, rootView);
+				tvLore.setTypeface(tf);
+				tvChampTitle.setTypeface(tf);
+
+				tvLore.setText(Html.fromHtml(champ.getLore()));
+				tvChampTitle.setText(champ.getName() + ", " + champ.getTitle());
 			}
 
 			return rootView;

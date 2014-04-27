@@ -17,7 +17,9 @@ local.properties
 .settings/
 assets/fonts
 .loadpath
+.factorypath
 *.png
+.apt_generated
 res/drawable-mdpi
 
 

@@ -1,7 +1,6 @@
 package com.jt.getdunked;
 
 import android.content.Context;
-import android.graphics.Paint;
 import android.graphics.Typeface;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,22 +11,18 @@ import android.widget.TextView;
 import com.jt.getdunked.ChampionData.Champion;
 import com.jt.getdunked.ChampionData.Spell;
 import com.jt.getdunked.ChampionData.Var;
-import com.pagesuite.flowtext.FlowTextView;
 
 public class SpellListAdapter extends BaseAdapter {
 	private Champion champ;
 	private Context c;
 	private int id;
 	private Typeface tf;
-	private Typeface boldTf;
 
 	public SpellListAdapter(Context c, Champion champ) {
 		this.champ = champ;
 		this.c = c;
 		id = champ.getId();
 		tf = Typeface.createFromAsset(c.getAssets(), "fonts/Roboto-Light.ttf");
-		boldTf = Typeface.createFromAsset(c.getAssets(),
-				"fonts/Roboto-Bold.ttf");
 
 	}
 

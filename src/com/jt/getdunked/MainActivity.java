@@ -148,7 +148,6 @@ public class MainActivity extends Activity implements
 	public static class PlaceholderFragment extends Fragment {
 
 		private GridView gvChamps;
-		private CardView lvCards;
 
 		/**
 		 * The fragment argument representing the section number for this
@@ -219,13 +218,11 @@ public class MainActivity extends Activity implements
 
 		private Context cxt;
 		private GridView gvChamps;
-		private CardView lvCards;
 		long startTimeMillis;
 
 		private GetChampionsForGrid(Context c, GridView gv, CardView lv) {
 			cxt = c;
 			gvChamps = gv;
-			lvCards = lv;
 		}
 
 		@Override
@@ -251,6 +248,7 @@ public class MainActivity extends Activity implements
 		}
 	}
 
+	@SuppressWarnings("unused")
 	private void addAllChampionsToDatabase(ChampIds champIds) {
 
 		DatabaseHelper db = new DatabaseHelper(this);

@@ -1,12 +1,5 @@
 package com.jt.getdunked;
 
-import java.util.zip.Inflater;
-
-import com.jt.getdunked.ChampionData.Champion;
-import com.jt.getdunked.ChampionData.Spell;
-import com.jt.getdunked.ChampionData.Var;
-import com.jt.getdunked.SpellListAdapter.ViewHolder;
-
 import android.content.Context;
 import android.graphics.Typeface;
 import android.view.View;
@@ -14,6 +7,12 @@ import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
+import butterknife.ButterKnife;
+import butterknife.InjectView;
+
+import com.jt.getdunked.ChampionData.Champion;
+import com.jt.getdunked.ChampionData.Spell;
+import com.jt.getdunked.ChampionData.Var;
 
 public class ExpandableSpellListAdapter extends BaseExpandableListAdapter {
 
@@ -21,13 +20,14 @@ public class ExpandableSpellListAdapter extends BaseExpandableListAdapter {
 	private Context c;
 	private int id;
 	private Typeface tf;
-	
+
 	public ExpandableSpellListAdapter(Context c, Champion champ) {
 		this.champ = champ;
 		this.c = c;
 		id = champ.getId();
 		tf = Typeface.createFromAsset(c.getAssets(), "fonts/Roboto-Light.ttf");
 	}
+
 	@Override
 	public Object getChild(int arg0, int arg1) {
 		// TODO Auto-generated method stub
@@ -40,16 +40,59 @@ public class ExpandableSpellListAdapter extends BaseExpandableListAdapter {
 		return childPosition;
 	}
 
+	static class ViewHolder {
+		@InjectView(R.id.tv_cost)
+		TextView tvCost;
+		@InjectView(R.id.tv_spell_title)
+		TextView tvCostTitle;
+		@InjectView(R.id.tv_cooldown)
+		TextView tvCooldown;
+		@InjectView(R.id.tv_cooldown_title)
+		TextView tvCooldownTitle;
+		@InjectView(R.id.tv_range)
+		TextView tvRange;
+		@InjectView(R.id.tv_range_title)
+		TextView tvRangeTitle;
+
+		public ViewHolder(View view) {
+			ButterKnife.inject(this, view);
+		}
+	}
+
 	@Override
 	public View getChildView(int groupPosition, int childPosition,
 			boolean isLastChild, View convertView, ViewGroup parent) {
+
 		ViewHolder vh;
 		if (convertView == null) {
-			
-			vh = new ViewHolder();
-			convertView = View.inflate(c, R.layout.spell_list_layout, null);
+
+			convertView = View.inflate(c, R.layout.spell_child_list_layout,
+					null);
+			vh = new ViewHolder(convertView);
 			convertView.setTag(vh);
+		} else {
+			vh = (ViewHolder) convertView.getTag();
 		}
+
+		vh.tvCost.setTypeface(tf);
+		vh.tvCostTitle.setTypeface(tf);
+		vh.tvCooldown.setTypeface(tf);
+		vh.tvCooldownTitle.setTypeface(tf);
+		vh.tvRange.setTypeface(tf);
+		vh.tvRangeTitle.setTypeface(tf);
+
+		vh.tvRange.setText(champ.getSpells().get(groupPosition).getRangeBurn());
+
+		vh.tvCooldown.setText(champ.getSpells().get(groupPosition)
+				.getCooldownBurn());
+
+		vh.tvCost.setText(champ
+				.getSpells()
+				.get(groupPosition)
+				.getResource()
+				.replace("{{ cost }}",
+						champ.getSpells().get(groupPosition).getCostBurn()));
+
 		return convertView;
 	}
 
@@ -77,15 +120,22 @@ public class ExpandableSpellListAdapter extends BaseExpandableListAdapter {
 		return groupPosition;
 	}
 
+	static class ParentViewHolder {
+		ImageView ivSpellIcon;
+		ImageView ivSecondarySpellIcon;
+		TextView tvSpellTooltip;
+		TextView tvSpellTitle;
+	}
+
 	@Override
 	public View getGroupView(int groupPosition, boolean isExpanded,
 			View convertView, ViewGroup parent) {
-		ViewHolder vh;
+		ParentViewHolder vh;
 
 		if (convertView == null) {
 			convertView = View.inflate(c, R.layout.spell_list_layout, null);
 
-			vh = new ViewHolder();
+			vh = new ParentViewHolder();
 
 			vh.tvSpellTitle = (TextView) convertView
 					.findViewById(R.id.tv_spell_title);
@@ -99,7 +149,7 @@ public class ExpandableSpellListAdapter extends BaseExpandableListAdapter {
 			convertView.setTag(vh);
 
 		} else {
-			vh = (ViewHolder) convertView.getTag();
+			vh = (ParentViewHolder) convertView.getTag();
 		}
 
 		vh.tvSpellTooltip.setTypeface(tf);
@@ -239,21 +289,23 @@ public class ExpandableSpellListAdapter extends BaseExpandableListAdapter {
 		switch (id) {
 		case 3: // Galio
 			vh.tvSpellTooltip.setText(makeTooltip(
-					champ.getSpells().get(groupPosition)).replace("{{ e4 }}", "4"));
+					champ.getSpells().get(groupPosition)).replace("{{ e4 }}",
+					"4"));
 			break;
 		case 7: // LeBlanc
-			vh.tvSpellTooltip
-					.setText(makeTooltip(champ.getSpells().get(groupPosition))
-							.replace("{{ e4 }}", "1.5"));
+			vh.tvSpellTooltip.setText(makeTooltip(
+					champ.getSpells().get(groupPosition)).replace("{{ e4 }}",
+					"1.5"));
 			break;
 		case 21: // Miss Fortune
 			if (groupPosition == 0) {
 				vh.tvSpellTooltip.setText(makeTooltip(
-						champ.getSpells().get(groupPosition)).replace("{{ f1 }}",
-						"0.8").replace("{{ f2 }}", "1.0"));
+						champ.getSpells().get(groupPosition)).replace(
+						"{{ f1 }}", "0.8").replace("{{ f2 }}", "1.0"));
 			} else if (groupPosition == 1) {
 				vh.tvSpellTooltip
-						.setText(makeTooltip(champ.getSpells().get(groupPosition))
+						.setText(makeTooltip(
+								champ.getSpells().get(groupPosition))
 								.replace("{{ f1 }}", "6% AD")
 								.replace("{{ f2 }}", "30% AD")
 								.replace("{{ f3 }}", "5"));
@@ -286,16 +338,18 @@ public class ExpandableSpellListAdapter extends BaseExpandableListAdapter {
 			break;
 		case 79: // Gragas
 			vh.tvSpellTooltip.setText(makeTooltip(
-					champ.getSpells().get(groupPosition)).replace("{{ f1 }}", "3"));
+					champ.getSpells().get(groupPosition)).replace("{{ f1 }}",
+					"3"));
 			break;
 		case 83: // Yorick
 			vh.tvSpellTooltip.setText(makeTooltip(
-					champ.getSpells().get(groupPosition)).replace("{{ e5 }}", "40"));
+					champ.getSpells().get(groupPosition)).replace("{{ e5 }}",
+					"40"));
 			break;
 		case 86: // Garen
 			vh.tvSpellTooltip.setText(makeTooltip(
-					champ.getSpells().get(groupPosition)).replace("(+{{ f1 }})",
-					"damage"));
+					champ.getSpells().get(groupPosition)).replace(
+					"(+{{ f1 }})", "damage"));
 			break;
 		case 143: // Zyra
 			vh.tvSpellTooltip.setText(makeTooltip(
@@ -305,13 +359,13 @@ public class ExpandableSpellListAdapter extends BaseExpandableListAdapter {
 			break;
 		case 238: // Zed
 			vh.tvSpellTooltip.setText(makeTooltip(
-					champ.getSpells().get(groupPosition))
-					.replace(" (+{{ f3 }})", ""));
+					champ.getSpells().get(groupPosition)).replace(
+					" (+{{ f3 }})", ""));
 			break;
 		case 266: // Aatrox
 			vh.tvSpellTooltip.setText(makeTooltip(
-					champ.getSpells().get(groupPosition)).replace("({{ f5 }}) ", "")
-					.replace("{{ f4 }} ", ""));
+					champ.getSpells().get(groupPosition)).replace(
+					"({{ f5 }}) ", "").replace("{{ f4 }} ", ""));
 			break;
 		case 267: // Nami
 			vh.tvSpellTooltip.setText(makeTooltip(
@@ -349,7 +403,7 @@ public class ExpandableSpellListAdapter extends BaseExpandableListAdapter {
 		// TODO Auto-generated method stub
 		return false;
 	}
-	
+
 	private String makeTooltip(Spell spell) {
 
 		String tooltip = spell.getSanitizedTooltip();
