@@ -8,7 +8,7 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="com.jt.getdunked.ChampionActivity$PlaceholderFragment" >
 
-    <TextView
+    <com.jt.getdunked.RoboLightTextView
         android:id="@+id/tv_spell_title"
         style="?android:attr/listSeparatorTextViewStyle"
         android:layout_width="fill_parent"
@@ -20,7 +20,7 @@
         android:textColor="#000000"
         android:textSize="18sp" />
 
-    <TextView
+    <com.jt.getdunked.RoboLightTextView
         android:id="@+id/section_label"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"

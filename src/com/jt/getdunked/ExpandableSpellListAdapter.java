@@ -154,15 +154,33 @@ public class ExpandableSpellListAdapter extends BaseExpandableListAdapter {
 
 		vh.tvSpellTooltip.setTypeface(tf);
 		vh.tvSpellTitle.setTypeface(tf);
-		// vh.tvSpellTitle.setPaintFlags(vh.tvSpellTitle.getPaintFlags() |
-		// Paint.UNDERLINE_TEXT_FLAG);
+		
 		vh.tvSpellTitle.setText(champ.getSpells().get(groupPosition).getName());
 
 		if (!champ.getSpells().get(groupPosition).getName().contains("/")) {
 			vh.ivSecondarySpellIcon.setVisibility(View.GONE);
 		}
+		if (champ.getId() == 74 && groupPosition != 3) {
+			vh.ivSecondarySpellIcon.setVisibility(View.VISIBLE);
+		}
 
 		switch (champ.getId()) {
+		case 51: // Caitlyn
+			switch (groupPosition) {
+			case 2:
+				vh.ivSpellIcon.setImageResource(Utils.getResIdByName(c,
+						"ninety_caliber_net"));
+				break;
+			default:
+				vh.ivSpellIcon.setImageResource(Utils.getResIdByName(
+						c,
+						champ.getSpells().get(groupPosition).getName()
+								.replace(" ", "_").replace("'", "")
+								.replace("-", "").replace(",", "")
+								.replace("!", "")));
+				break;
+			}
+			break;
 		case 60: // Elise
 			switch (groupPosition) {
 			case 0:
@@ -212,6 +230,32 @@ public class ExpandableSpellListAdapter extends BaseExpandableListAdapter {
 			case 3:
 				vh.ivSpellIcon.setImageResource(Utils.getResIdByName(c,
 						"dragons_rage"));
+				break;
+			}
+			break;
+		case 74: // Heimer
+			switch (groupPosition) {
+			case 0:
+				vh.ivSpellIcon.setImageResource(Utils.getResIdByName(c,
+						"hg_evolution_turret"));
+				vh.ivSecondarySpellIcon.setImageResource(Utils.getResIdByName(
+						c, "hq_apex_turret"));
+				break;
+			case 1:
+				vh.ivSpellIcon.setImageResource(Utils.getResIdByName(c,
+						"hextech_microrockets"));
+				vh.ivSecondarySpellIcon.setImageResource(Utils.getResIdByName(
+						c, "hextech_rocket_swarm"));
+				break;
+			case 2:
+				vh.ivSpellIcon.setImageResource(Utils.getResIdByName(c,
+						"ch1_concussion_grenade"));
+				vh.ivSecondarySpellIcon.setImageResource(Utils.getResIdByName(
+						c, "ch3x_lightning_grenade"));
+				break;
+			case 3:
+				vh.ivSpellIcon.setImageResource(Utils.getResIdByName(c,
+						"upgrade"));
 				break;
 			}
 			break;

@@ -12,7 +12,7 @@
         android:paddingRight="@dimen/activity_horizontal_margin"
         android:paddingTop="@dimen/activity_vertical_margin" >
 
-        <TextView
+        <com.jt.getdunked.RoboLightTextView
             android:id="@+id/tv_champ_title"
             style="?android:attr/listSeparatorTextViewStyle"
             android:layout_width="fill_parent"
@@ -25,12 +25,12 @@
             android:textColor="#000000"
             android:textSize="18sp" />
 
-        <TextView
+        <com.jt.getdunked.RoboLightTextView
             android:id="@+id/tv_lore"
-            android:layout_below="@+id/tv_champ_title"
-            android:layout_marginTop="8dp"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/tv_champ_title"
+            android:layout_marginTop="8dp" />
     </RelativeLayout>
 
 </ScrollView>

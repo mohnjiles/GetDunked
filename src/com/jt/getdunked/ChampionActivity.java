@@ -183,9 +183,9 @@ public class ChampionActivity extends Activity implements ActionBar.TabListener 
 		}
 
 		@InjectView(R.id.tv_lore)
-		TextView tvLore;
+		RoboLightTextView tvLore;
 		@InjectView(R.id.tv_champ_title)
-		TextView tvChampTitle;
+		RoboLightTextView tvChampTitle;
 
 		public PlaceholderFragment() {
 
@@ -195,9 +195,6 @@ public class ChampionActivity extends Activity implements ActionBar.TabListener 
 		public View onCreateView(LayoutInflater inflater, ViewGroup container,
 				Bundle savedInstanceState) {
 			View rootView = null;
-
-			Typeface tf = TypefaceCache.get(getActivity().getAssets(),
-					"fonts/Roboto-Light.ttf");
 
 			Intent intent = getActivity().getIntent();
 			final int champId = intent.getIntExtra("id", 1);
@@ -225,11 +222,12 @@ public class ChampionActivity extends Activity implements ActionBar.TabListener 
 				lvSpells.setDivider(null);
 				lvSpells.setAdapter(adapter);
 
+			} else if (sectionNum == 2) {
+				rootView = inflater.inflate(R.layout.fragment_stats, null);
+				
 			} else if (sectionNum == 3) {
 				rootView = inflater.inflate(R.layout.lore_layout, null);
 				ButterKnife.inject(this, rootView);
-				tvLore.setTypeface(tf);
-				tvChampTitle.setTypeface(tf);
 
 				tvLore.setText(Html.fromHtml(champ.getLore()));
 				tvChampTitle.setText(champ.getName() + ", " + champ.getTitle());

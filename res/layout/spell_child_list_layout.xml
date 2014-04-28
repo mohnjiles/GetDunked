@@ -16,75 +16,69 @@
         android:layout_centerHorizontal="true"
         android:contentDescription="wut" />
 
-    <TextView
-        android:id="@+id/tv_cooldown"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignBottom="@+id/tv_cooldown_title"
-        android:layout_alignTop="@+id/tv_cooldown_title"
-        android:layout_marginLeft="8dp"
-        android:layout_toRightOf="@+id/tv_cooldown_title"
-        android:gravity="bottom|fill"
-        android:text="test"
-        android:textColor="#333333"
-        android:textSize="12sp" />
-
-    <TextView
-        android:id="@+id/tv_cost"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignBottom="@+id/tv_spell_title"
-        android:layout_alignTop="@+id/positioning"
-        android:layout_marginLeft="8dp"
-        android:layout_toRightOf="@+id/tv_spell_title"
-        android:gravity="bottom|fill"
-        android:text="test"
-        android:textColor="#333333"
-        android:textSize="12sp" />
-
-    <TextView
-        android:id="@+id/tv_spell_title"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_alignTop="@+id/positioning"
-        android:text="COST"
-        android:textColor="#000000"
-        android:textSize="16sp" />
-
-    <TextView
-        android:id="@+id/tv_range"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignBottom="@+id/tv_range_title"
-        android:layout_alignTop="@+id/tv_range_title"
-        android:layout_marginLeft="8dp"
-        android:layout_toRightOf="@+id/tv_range_title"
-        android:gravity="bottom|fill"
-        android:text="test"
-        android:textColor="#333333"
-        android:textSize="12sp" />
-
-    <TextView
+    <com.jt.getdunked.RoboLightTextView
         android:id="@+id/tv_range_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/tv_spell_title"
-        android:layout_below="@+id/tv_spell_title"
-        android:layout_marginTop="8dp"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
         android:text="RANGE"
         android:textColor="#000000"
         android:textSize="16sp" />
 
-    <TextView
-        android:id="@+id/tv_cooldown_title"
+    <com.jt.getdunked.RoboLightTextView
+        android:id="@+id/tv_range"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignLeft="@+id/tv_range_title"
         android:layout_below="@+id/tv_range_title"
+        android:gravity="center"
+        android:text="test"
+        android:textColor="#333333"
+        android:textSize="12sp" />
+
+    <com.jt.getdunked.RoboLightTextView
+        android:id="@+id/tv_cooldown_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@+id/tv_range"
         android:layout_marginTop="8dp"
         android:text="COOLDOWN"
         android:textColor="#000000"
         android:textSize="16sp" />
+
+    <com.jt.getdunked.RoboLightTextView
+        android:id="@+id/tv_cost"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/tv_cooldown_title"
+        android:layout_below="@+id/tv_cooldown_title"
+        android:text="test"
+        android:textColor="#333333"
+        android:textSize="12sp" />
+
+    <com.jt.getdunked.RoboLightTextView
+        android:id="@+id/tv_spell_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@+id/tv_cost"
+        android:layout_marginTop="8dp"
+        android:gravity="center"
+        android:text="COST"
+        android:textColor="#000000"
+        android:textSize="16sp" />
+
+    <com.jt.getdunked.RoboLightTextView
+        android:id="@+id/tv_cooldown"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/tv_spell_title"
+        android:layout_below="@+id/tv_spell_title"
+        android:gravity="right"
+        android:text="test"
+        android:textColor="#333333"
+        android:textSize="12sp" />
 
 </RelativeLayout>
