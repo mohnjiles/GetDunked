@@ -49,11 +49,12 @@
         android:textSize="16sp" />
 
     <com.jt.getdunked.RoboLightTextView
-        android:id="@+id/tv_cost"
+        android:id="@+id/tv_cooldown"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignLeft="@+id/tv_cooldown_title"
         android:layout_below="@+id/tv_cooldown_title"
+        android:gravity="right"
         android:text="test"
         android:textColor="#333333"
         android:textSize="12sp" />
@@ -62,8 +63,8 @@
         android:id="@+id/tv_spell_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_below="@+id/tv_cost"
+        android:layout_alignLeft="@+id/tv_cooldown"
+        android:layout_below="@+id/tv_cooldown"
         android:layout_marginTop="8dp"
         android:gravity="center"
         android:text="COST"
@@ -71,12 +72,11 @@
         android:textSize="16sp" />
 
     <com.jt.getdunked.RoboLightTextView
-        android:id="@+id/tv_cooldown"
+        android:id="@+id/tv_cost"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignLeft="@+id/tv_spell_title"
         android:layout_below="@+id/tv_spell_title"
-        android:gravity="right"
         android:text="test"
         android:textColor="#333333"
         android:textSize="12sp" />

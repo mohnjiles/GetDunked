@@ -1,5 +1,6 @@
 package com.jt.getdunked;
 
+import java.util.List;
 import java.util.Locale;
 
 import android.app.ActionBar;
@@ -8,7 +9,11 @@ import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.Intent;
-import android.graphics.Typeface;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Color;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.v13.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
@@ -19,8 +24,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ExpandableListView;
-import android.widget.ListView;
-import android.widget.TextView;
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 
@@ -53,6 +56,25 @@ public class ChampionActivity extends Activity implements ActionBar.TabListener 
 		final ActionBar actionBar = getActionBar();
 		actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
 
+//		Intent intent = getIntent();
+//		final int champId = intent.getIntExtra("id", 1);
+//		DatabaseHelper db = new DatabaseHelper(this);
+//		Champion champ = db.getChampion(champId);
+//
+//		Bitmap originalBitmap = BitmapFactory.decodeResource(getResources(),
+//				Utils.getResIdByName(this, champ.getKey() + "square"));
+//		
+//		Bitmap onePixelBitmap = Bitmap.createScaledBitmap(originalBitmap, 1, 1, true);
+//		
+//		int pixel = onePixelBitmap.getPixel(0, 0);
+		
+		
+		actionBar.setBackgroundDrawable(new ColorDrawable(Color.argb(255, 0,
+				153, 204)));
+		actionBar.setStackedBackgroundDrawable(new ColorDrawable(Color.argb(
+				255, 0, 153, 204)));
+	
+
 		// Create the adapter that will return a fragment for each of the three
 		// primary sections of the activity.
 		mSectionsPagerAdapter = new SectionsPagerAdapter(getFragmentManager());
@@ -81,6 +103,7 @@ public class ChampionActivity extends Activity implements ActionBar.TabListener 
 			actionBar.addTab(actionBar.newTab()
 					.setText(mSectionsPagerAdapter.getPageTitle(i))
 					.setTabListener(this));
+
 		}
 	}
 
@@ -137,7 +160,13 @@ public class ChampionActivity extends Activity implements ActionBar.TabListener 
 			// getItem is called to instantiate the fragment for the given page.
 			// Return a PlaceholderFragment (defined as a static inner class
 			// below).
-			return PlaceholderFragment.newInstance(position + 1);
+			switch (position) {
+			case 1:
+				return StatsFragment.newInstance(position + 1);
+			default:
+				return PlaceholderFragment.newInstance(position + 1);
+			}
+
 		}
 
 		@Override
@@ -195,11 +224,19 @@ public class ChampionActivity extends Activity implements ActionBar.TabListener 
 		public View onCreateView(LayoutInflater inflater, ViewGroup container,
 				Bundle savedInstanceState) {
 			View rootView = null;
-
 			Intent intent = getActivity().getIntent();
 			final int champId = intent.getIntExtra("id", 1);
 			DatabaseHelper db = new DatabaseHelper(getActivity());
 			Champion champ = db.getChampion(champId);
+
+			Spell passive = new Spell();
+			passive.setSanitizedTooltip(champ.getPassive()
+					.getSanitizedDescription());
+			passive.setName(champ.getPassive().getName());
+
+			List<Spell> spellList = champ.getSpells();
+			spellList.add(0, passive);
+			champ.setSpells(spellList);
 
 			db.close();
 
@@ -221,10 +258,19 @@ public class ChampionActivity extends Activity implements ActionBar.TabListener 
 				lvSpells.setDividerHeight(0);
 				lvSpells.setDivider(null);
 				lvSpells.setAdapter(adapter);
+				lvSpells.setOnGroupClickListener(new ExpandableListView.OnGroupClickListener() {
 
-			} else if (sectionNum == 2) {
-				rootView = inflater.inflate(R.layout.fragment_stats, null);
-				
+					@Override
+					public boolean onGroupClick(ExpandableListView parent,
+							View v, int groupPosition, long id) {
+						if (groupPosition == 0) {
+							return true;
+						} else {
+							return false;
+						}
+					}
+				});
+
 			} else if (sectionNum == 3) {
 				rootView = inflater.inflate(R.layout.lore_layout, null);
 				ButterKnife.inject(this, rootView);

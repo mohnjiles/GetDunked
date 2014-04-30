@@ -11,5 +11,9 @@ public class Utils {
 				drawableName.toLowerCase(), "drawable",
 				context.getPackageName());
 	}
+	
+	static String makeFragmentName(int viewId, int index) {
+		return "android:switcher:" + viewId + ":" + index;
+	}
 
 }

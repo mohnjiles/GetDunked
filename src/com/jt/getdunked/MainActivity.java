@@ -11,6 +11,8 @@ import android.app.Fragment;
 import android.app.FragmentManager;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.widget.DrawerLayout;
@@ -73,6 +75,9 @@ public class MainActivity extends Activity implements
 		mNavigationDrawerFragment.setUp(R.id.navigation_drawer,
 				(DrawerLayout) findViewById(R.id.drawer_layout));
 
+		getActionBar().setBackgroundDrawable(
+				new ColorDrawable(Color.argb(255, 0, 153, 204)));
+
 		db = new DatabaseHelper(this);
 		listChamps = db.getAllChampions();
 		db.close();
@@ -85,10 +90,18 @@ public class MainActivity extends Activity implements
 		Bundle args = new Bundle();
 		args.putInt("position", position);
 
-		FragmentManager fragmentManager = getFragmentManager();
-		fragmentManager.beginTransaction()
-				.replace(R.id.container, PlaceholderFragment.newInstance(args))
-				.commit();
+		switch (position) {
+		case 1:
+			startActivity(new Intent(MainActivity.this, ProfileActivity.class));
+			break;
+		default:
+			FragmentManager fragmentManager = getFragmentManager();
+			fragmentManager
+					.beginTransaction()
+					.replace(R.id.container,
+							PlaceholderFragment.newInstance(args)).commit();
+			break;
+		}
 	}
 
 	public void onSectionAttached(int number) {
@@ -189,7 +202,9 @@ public class MainActivity extends Activity implements
 
 					Intent intent = new Intent(getActivity(),
 							ChampionActivity.class);
-					intent.putExtra("id", (Integer) arg1.findViewById(R.id.grid_item_image).getTag());
+					intent.putExtra("id",
+							(Integer) arg1.findViewById(R.id.grid_item_image)
+									.getTag());
 					startActivity(intent);
 
 					db.close();

@@ -62,7 +62,7 @@ public class ExpandableSpellListAdapter extends BaseExpandableListAdapter {
 	@Override
 	public View getChildView(int groupPosition, int childPosition,
 			boolean isLastChild, View convertView, ViewGroup parent) {
-
+		
 		ViewHolder vh;
 		if (convertView == null) {
 
@@ -73,6 +73,8 @@ public class ExpandableSpellListAdapter extends BaseExpandableListAdapter {
 		} else {
 			vh = (ViewHolder) convertView.getTag();
 		}
+
+		
 
 		vh.tvCost.setTypeface(tf);
 		vh.tvCostTitle.setTypeface(tf);
@@ -151,23 +153,28 @@ public class ExpandableSpellListAdapter extends BaseExpandableListAdapter {
 		} else {
 			vh = (ParentViewHolder) convertView.getTag();
 		}
+		
+
+		if (groupPosition == 0) {
+			convertView.setClickable(false);
+		}
 
 		vh.tvSpellTooltip.setTypeface(tf);
 		vh.tvSpellTitle.setTypeface(tf);
-		
+
 		vh.tvSpellTitle.setText(champ.getSpells().get(groupPosition).getName());
 
 		if (!champ.getSpells().get(groupPosition).getName().contains("/")) {
 			vh.ivSecondarySpellIcon.setVisibility(View.GONE);
 		}
-		if (champ.getId() == 74 && groupPosition != 3) {
+		if (champ.getId() == 74 && groupPosition != 4 && groupPosition != 0) {
 			vh.ivSecondarySpellIcon.setVisibility(View.VISIBLE);
 		}
 
 		switch (champ.getId()) {
 		case 51: // Caitlyn
 			switch (groupPosition) {
-			case 2:
+			case 3:
 				vh.ivSpellIcon.setImageResource(Utils.getResIdByName(c,
 						"ninety_caliber_net"));
 				break;
@@ -185,23 +192,27 @@ public class ExpandableSpellListAdapter extends BaseExpandableListAdapter {
 			switch (groupPosition) {
 			case 0:
 				vh.ivSpellIcon.setImageResource(Utils.getResIdByName(c,
+						"spider_swarm"));
+				break;
+			case 1:
+				vh.ivSpellIcon.setImageResource(Utils.getResIdByName(c,
 						"neurotoxin"));
 				vh.ivSecondarySpellIcon.setImageResource(Utils.getResIdByName(
 						c, "venomous_bite"));
 				break;
-			case 1:
+			case 2:
 				vh.ivSpellIcon.setImageResource(Utils.getResIdByName(c,
 						"volatile_spiderling"));
 				vh.ivSecondarySpellIcon.setImageResource(Utils.getResIdByName(
 						c, "skittering_frenzy"));
 				break;
-			case 2:
+			case 3:
 				vh.ivSpellIcon.setImageResource(Utils.getResIdByName(c,
 						"cocoon"));
 				vh.ivSecondarySpellIcon.setImageResource(Utils.getResIdByName(
 						c, "rappel"));
 				break;
-			case 3:
+			case 4:
 				vh.ivSpellIcon.setImageResource(Utils.getResIdByName(c,
 						"spider_form"));
 				break;
@@ -211,23 +222,27 @@ public class ExpandableSpellListAdapter extends BaseExpandableListAdapter {
 			switch (groupPosition) {
 			case 0:
 				vh.ivSpellIcon.setImageResource(Utils.getResIdByName(c,
+						"flurry"));
+				break;
+			case 1:
+				vh.ivSpellIcon.setImageResource(Utils.getResIdByName(c,
 						"sonic_wave"));
 				vh.ivSecondarySpellIcon.setImageResource(Utils.getResIdByName(
 						c, "resonating_strike"));
 				break;
-			case 1:
+			case 2:
 				vh.ivSpellIcon.setImageResource(Utils.getResIdByName(c,
 						"safeguard"));
 				vh.ivSecondarySpellIcon.setImageResource(Utils.getResIdByName(
 						c, "iron_will"));
 				break;
-			case 2:
+			case 3:
 				vh.ivSpellIcon.setImageResource(Utils.getResIdByName(c,
 						"tempest"));
 				vh.ivSecondarySpellIcon.setImageResource(Utils.getResIdByName(
 						c, "cripple"));
 				break;
-			case 3:
+			case 4:
 				vh.ivSpellIcon.setImageResource(Utils.getResIdByName(c,
 						"dragons_rage"));
 				break;
@@ -237,23 +252,27 @@ public class ExpandableSpellListAdapter extends BaseExpandableListAdapter {
 			switch (groupPosition) {
 			case 0:
 				vh.ivSpellIcon.setImageResource(Utils.getResIdByName(c,
+						"techmaturgical_repair_bots"));
+				break;
+			case 1:
+				vh.ivSpellIcon.setImageResource(Utils.getResIdByName(c,
 						"hg_evolution_turret"));
 				vh.ivSecondarySpellIcon.setImageResource(Utils.getResIdByName(
 						c, "hq_apex_turret"));
 				break;
-			case 1:
+			case 2:
 				vh.ivSpellIcon.setImageResource(Utils.getResIdByName(c,
 						"hextech_microrockets"));
 				vh.ivSecondarySpellIcon.setImageResource(Utils.getResIdByName(
 						c, "hextech_rocket_swarm"));
 				break;
-			case 2:
+			case 3:
 				vh.ivSpellIcon.setImageResource(Utils.getResIdByName(c,
 						"ch1_concussion_grenade"));
 				vh.ivSecondarySpellIcon.setImageResource(Utils.getResIdByName(
 						c, "ch3x_lightning_grenade"));
 				break;
-			case 3:
+			case 4:
 				vh.ivSpellIcon.setImageResource(Utils.getResIdByName(c,
 						"upgrade"));
 				break;
@@ -262,24 +281,28 @@ public class ExpandableSpellListAdapter extends BaseExpandableListAdapter {
 		case 76: // Nidalee
 			switch (groupPosition) {
 			case 0:
+				vh.ivSpellIcon.setImageResource(Utils
+						.getResIdByName(c, "prowl"));
+				break;
+			case 1:
 				vh.ivSpellIcon.setImageResource(Utils.getResIdByName(c,
 						"javelin_toss"));
 				vh.ivSecondarySpellIcon.setImageResource(Utils.getResIdByName(
 						c, "takedown"));
 				break;
-			case 1:
+			case 2:
 				vh.ivSpellIcon.setImageResource(Utils.getResIdByName(c,
 						"bushwhack"));
 				vh.ivSecondarySpellIcon.setImageResource(Utils.getResIdByName(
 						c, "pounce"));
 				break;
-			case 2:
+			case 3:
 				vh.ivSpellIcon.setImageResource(Utils.getResIdByName(c,
 						"primal_surge"));
 				vh.ivSecondarySpellIcon.setImageResource(Utils.getResIdByName(
 						c, "swipe"));
 				break;
-			case 3:
+			case 4:
 				vh.ivSpellIcon.setImageResource(Utils.getResIdByName(c,
 						"aspect_of_the_cougar"));
 				break;
@@ -289,23 +312,27 @@ public class ExpandableSpellListAdapter extends BaseExpandableListAdapter {
 			switch (groupPosition) {
 			case 0:
 				vh.ivSpellIcon.setImageResource(Utils.getResIdByName(c,
+						"hextech_capacitor"));
+				break;
+			case 1:
+				vh.ivSpellIcon.setImageResource(Utils.getResIdByName(c,
 						"to_the_skies"));
 				vh.ivSecondarySpellIcon.setImageResource(Utils.getResIdByName(
 						c, "shock_blast"));
 				break;
-			case 1:
+			case 2:
 				vh.ivSpellIcon.setImageResource(Utils.getResIdByName(c,
 						"lightning_field"));
 				vh.ivSecondarySpellIcon.setImageResource(Utils.getResIdByName(
 						c, "hyper_charge"));
 				break;
-			case 2:
+			case 3:
 				vh.ivSpellIcon.setImageResource(Utils.getResIdByName(c,
 						"thundering_blow"));
 				vh.ivSecondarySpellIcon.setImageResource(Utils.getResIdByName(
 						c, "acceleration_gate"));
 				break;
-			case 3:
+			case 4:
 				vh.ivSpellIcon.setImageResource(Utils.getResIdByName(c,
 						"transform_mercury_cannon"));
 				vh.ivSecondarySpellIcon.setImageResource(Utils.getResIdByName(
@@ -314,7 +341,7 @@ public class ExpandableSpellListAdapter extends BaseExpandableListAdapter {
 			}
 			break;
 		case 266: // Aatrox
-			if (groupPosition == 1) {
+			if (groupPosition == 2) {
 				vh.ivSpellIcon.setImageResource(Utils.getResIdByName(c,
 						"blood_thirst"));
 				vh.ivSecondarySpellIcon.setImageResource(Utils.getResIdByName(
@@ -342,11 +369,11 @@ public class ExpandableSpellListAdapter extends BaseExpandableListAdapter {
 					"1.5"));
 			break;
 		case 21: // Miss Fortune
-			if (groupPosition == 0) {
+			if (groupPosition == 1) {
 				vh.tvSpellTooltip.setText(makeTooltip(
 						champ.getSpells().get(groupPosition)).replace(
 						"{{ f1 }}", "0.8").replace("{{ f2 }}", "1.0"));
-			} else if (groupPosition == 1) {
+			} else if (groupPosition == 2) {
 				vh.tvSpellTooltip
 						.setText(makeTooltip(
 								champ.getSpells().get(groupPosition))
@@ -361,17 +388,17 @@ public class ExpandableSpellListAdapter extends BaseExpandableListAdapter {
 		case 30: // Karthus
 			vh.tvSpellTooltip.setText(makeTooltip(
 					champ.getSpells().get(groupPosition)).replace("{{ cost }}",
-					champ.getSpells().get(2).getCostBurn()));
+					champ.getSpells().get(3).getCostBurn()));
 			break;
 		case 38: // Kassadin
 			vh.tvSpellTooltip.setText(makeTooltip(
 					champ.getSpells().get(groupPosition))
 					.replace(
 							"1.5 (+0.3)",
-							champ.getSpells().get(0).getEffectBurn().get(1)
+							champ.getSpells().get(1).getEffectBurn().get(1)
 									+ " (+0.8)")
 					.replace("{{ e4 }}",
-							champ.getSpells().get(0).getEffectBurn().get(2))
+							champ.getSpells().get(1).getEffectBurn().get(2))
 					.replace("{{ f2 }}", "2% of max mana")
 					.replace("{{ f1 }}", "1% of max mana"));
 			break;
@@ -419,7 +446,7 @@ public class ExpandableSpellListAdapter extends BaseExpandableListAdapter {
 		case 103: // Ahri
 			vh.tvSpellTooltip.setText(makeTooltip(
 					champ.getSpells().get(groupPosition)).replace("{{ f1 }}",
-					champ.getSpells().get(1).getEffectBurn().get(2)));
+					champ.getSpells().get(2).getEffectBurn().get(2)));
 			break;
 
 		case 101: // Xerath
