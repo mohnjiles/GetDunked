@@ -10,19 +10,19 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
-import com.jt.getdunked.ChampionData.Blocks;
-import com.jt.getdunked.ChampionData.Champion;
-import com.jt.getdunked.ChampionData.Info;
-import com.jt.getdunked.ChampionData.Item;
-import com.jt.getdunked.ChampionData.Passive;
-import com.jt.getdunked.ChampionData.Recommended;
-import com.jt.getdunked.ChampionData.Skins;
-import com.jt.getdunked.ChampionData.Spell;
-import com.jt.getdunked.ChampionData.Stats;
-import com.jt.getdunked.ChampionData.Var;
+import com.jt.getdunked.championdata.Blocks;
+import com.jt.getdunked.championdata.Champion;
+import com.jt.getdunked.championdata.Info;
+import com.jt.getdunked.championdata.Item;
+import com.jt.getdunked.championdata.Passive;
+import com.jt.getdunked.championdata.Recommended;
+import com.jt.getdunked.championdata.Skins;
+import com.jt.getdunked.championdata.Spell;
+import com.jt.getdunked.championdata.Stats;
+import com.jt.getdunked.championdata.Var;
 import com.readystatesoftware.sqliteasset.SQLiteAssetHelper;
 
-public class DatabaseHelper extends SQLiteAssetHelper {
+public class ChampionDatabaseHelper extends SQLiteAssetHelper {
 
 	private static final int DATABASE_VERSION = 31;
 	public static final String DATABASE_NAME = "championManager";
@@ -126,7 +126,7 @@ public class DatabaseHelper extends SQLiteAssetHelper {
 	private static final String KEY_MAGIC_RES_PER_LEVEL = "spellBlockPerLevel";
 	private static final String KEY_MOVESPEED = "movespeed";
 
-	public DatabaseHelper(Context context) {
+	public ChampionDatabaseHelper(Context context) {
 		super(context, DATABASE_NAME, null, DATABASE_VERSION);
 	}
 

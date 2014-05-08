@@ -1,5 +1,5 @@
 
-package com.jt.getdunked.ChampionData;
+package com.jt.getdunked.championdata;
 
 
 public class Lore{

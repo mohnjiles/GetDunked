@@ -10,8 +10,8 @@ import android.widget.TextView;
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 
-import com.jt.getdunked.ChampionData.Champion;
-import com.jt.getdunked.ChampionData.Stats;
+import com.jt.getdunked.championdata.Champion;
+import com.jt.getdunked.championdata.Stats;
 
 public class StatsFragment extends Fragment {
 
@@ -82,7 +82,7 @@ public class StatsFragment extends Fragment {
 
 		Intent intent = getActivity().getIntent();
 		final int champId = intent.getIntExtra("id", 1);
-		DatabaseHelper db = new DatabaseHelper(getActivity());
+		ChampionDatabaseHelper db = new ChampionDatabaseHelper(getActivity());
 		Champion champ = db.getChampion(champId);
 		db.close();
 

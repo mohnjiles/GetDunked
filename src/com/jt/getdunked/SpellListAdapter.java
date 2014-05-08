@@ -8,9 +8,9 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.jt.getdunked.ChampionData.Champion;
-import com.jt.getdunked.ChampionData.Spell;
-import com.jt.getdunked.ChampionData.Var;
+import com.jt.getdunked.championdata.Champion;
+import com.jt.getdunked.championdata.Spell;
+import com.jt.getdunked.championdata.Var;
 
 public class SpellListAdapter extends BaseAdapter {
 	private Champion champ;

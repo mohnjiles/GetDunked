@@ -223,5 +223,5 @@ pip-log.txt
 
 project.properties
 
-gson-2.2.4.jar
-HearthstoneUtil.apk
+src/com/jt/getdunked/Api.java
+GetDunked.apk

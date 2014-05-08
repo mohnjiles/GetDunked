@@ -2,7 +2,7 @@ package com.jt.getdunked;
 
 import java.util.Comparator;
 
-import com.jt.getdunked.ChampionData.Champion;
+import com.jt.getdunked.championdata.Champion;
 
 /**
  * Custom Comparator implementation. Sorts cards either alphabetically, by mana

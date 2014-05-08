@@ -27,9 +27,9 @@ import android.widget.ExpandableListView;
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 
-import com.jt.getdunked.ChampionData.Champion;
-import com.jt.getdunked.ChampionData.Spell;
-import com.jt.getdunked.ChampionData.Var;
+import com.jt.getdunked.championdata.Champion;
+import com.jt.getdunked.championdata.Spell;
+import com.jt.getdunked.championdata.Var;
 
 public class ChampionActivity extends Activity implements ActionBar.TabListener {
 
@@ -226,7 +226,7 @@ public class ChampionActivity extends Activity implements ActionBar.TabListener 
 			View rootView = null;
 			Intent intent = getActivity().getIntent();
 			final int champId = intent.getIntExtra("id", 1);
-			DatabaseHelper db = new DatabaseHelper(getActivity());
+			ChampionDatabaseHelper db = new ChampionDatabaseHelper(getActivity());
 			Champion champ = db.getChampion(champId);
 
 			Spell passive = new Spell();

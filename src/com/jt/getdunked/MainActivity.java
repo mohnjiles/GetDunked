@@ -27,21 +27,21 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.GridView;
 import android.widget.SearchView;
 
-import com.jt.getdunked.ChampionData.AllyTips;
-import com.jt.getdunked.ChampionData.Blurb;
-import com.jt.getdunked.ChampionData.ChampIds;
-import com.jt.getdunked.ChampionData.ChampInfo;
-import com.jt.getdunked.ChampionData.ChampPassive;
-import com.jt.getdunked.ChampionData.ChampSkins;
-import com.jt.getdunked.ChampionData.ChampSpell;
-import com.jt.getdunked.ChampionData.ChampStats;
-import com.jt.getdunked.ChampionData.Champion;
-import com.jt.getdunked.ChampionData.Champions;
-import com.jt.getdunked.ChampionData.EnemyTips;
-import com.jt.getdunked.ChampionData.Lore;
-import com.jt.getdunked.ChampionData.Partype;
-import com.jt.getdunked.ChampionData.RecommendedItems;
-import com.jt.getdunked.ChampionData.Tags;
+import com.jt.getdunked.championdata.AllyTips;
+import com.jt.getdunked.championdata.Blurb;
+import com.jt.getdunked.championdata.ChampIds;
+import com.jt.getdunked.championdata.ChampInfo;
+import com.jt.getdunked.championdata.ChampPassive;
+import com.jt.getdunked.championdata.ChampSkins;
+import com.jt.getdunked.championdata.ChampSpell;
+import com.jt.getdunked.championdata.ChampStats;
+import com.jt.getdunked.championdata.Champion;
+import com.jt.getdunked.championdata.Champions;
+import com.jt.getdunked.championdata.EnemyTips;
+import com.jt.getdunked.championdata.Lore;
+import com.jt.getdunked.championdata.Partype;
+import com.jt.getdunked.championdata.RecommendedItems;
+import com.jt.getdunked.championdata.Tags;
 
 public class MainActivity extends Activity implements
 		NavigationDrawerFragment.NavigationDrawerCallbacks {
@@ -60,7 +60,7 @@ public class MainActivity extends Activity implements
 	private static SearchView searchItem;
 	private static List<Champion> listChamps = new ArrayList<Champion>();
 	private static ImageAdapter adapter;
-	private DatabaseHelper db;
+	private ChampionDatabaseHelper db;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -78,7 +78,7 @@ public class MainActivity extends Activity implements
 		getActionBar().setBackgroundDrawable(
 				new ColorDrawable(Color.argb(255, 0, 153, 204)));
 
-		db = new DatabaseHelper(this);
+		db = new ChampionDatabaseHelper(this);
 		listChamps = db.getAllChampions();
 		db.close();
 	}
@@ -196,7 +196,7 @@ public class MainActivity extends Activity implements
 				public void onItemClick(AdapterView<?> arg0, View arg1,
 						int arg2, long arg3) {
 
-					DatabaseHelper db = new DatabaseHelper(getActivity());
+					ChampionDatabaseHelper db = new ChampionDatabaseHelper(getActivity());
 
 					Log.w("onItemClick", "id: " + db.getChampionIdByPos(arg2));
 
@@ -243,7 +243,7 @@ public class MainActivity extends Activity implements
 		@Override
 		protected List<Champion> doInBackground(Void... params) {
 
-			DatabaseHelper db = new DatabaseHelper(cxt);
+			ChampionDatabaseHelper db = new ChampionDatabaseHelper(cxt);
 			startTimeMillis = System.currentTimeMillis();
 
 			return db.getAllChampions();
@@ -266,7 +266,7 @@ public class MainActivity extends Activity implements
 	@SuppressWarnings("unused")
 	private void addAllChampionsToDatabase(ChampIds champIds) {
 
-		DatabaseHelper db = new DatabaseHelper(this);
+		ChampionDatabaseHelper db = new ChampionDatabaseHelper(this);
 
 		for (Champions champ : champIds.getChampions()) {
 

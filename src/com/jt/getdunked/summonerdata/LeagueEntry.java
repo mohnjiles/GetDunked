@@ -1,9 +1,8 @@
 
 package com.jt.getdunked.summonerdata;
 
-import java.util.List;
 
-public class Entries{
+public class LeagueEntry{
    	private boolean isFreshBlood;
    	private boolean isHotStreak;
    	private boolean isInactive;

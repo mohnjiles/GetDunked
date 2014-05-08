@@ -10,9 +10,9 @@ import android.widget.TextView;
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 
-import com.jt.getdunked.ChampionData.Champion;
-import com.jt.getdunked.ChampionData.Spell;
-import com.jt.getdunked.ChampionData.Var;
+import com.jt.getdunked.championdata.Champion;
+import com.jt.getdunked.championdata.Spell;
+import com.jt.getdunked.championdata.Var;
 
 public class ExpandableSpellListAdapter extends BaseExpandableListAdapter {
 

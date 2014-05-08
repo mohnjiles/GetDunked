@@ -1,4 +1,4 @@
-package com.jt.getdunked.SummonerData;
+package com.jt.getdunked.summonerdata;
 
 import java.util.List;
 

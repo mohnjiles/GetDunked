@@ -14,7 +14,7 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.jt.getdunked.ChampionData.Champion;
+import com.jt.getdunked.championdata.Champion;
 
 public class ImageAdapter extends BaseAdapter {
 	private Context mContext;

@@ -6,7 +6,7 @@ import java.util.Locale;
 
 import android.widget.SearchView.OnQueryTextListener;
 
-import com.jt.getdunked.ChampionData.Champion;
+import com.jt.getdunked.championdata.Champion;
 
 public class ChampionSearchListener implements OnQueryTextListener {
 

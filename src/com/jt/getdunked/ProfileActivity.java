@@ -12,6 +12,7 @@ import android.support.v13.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.SearchView;
 import android.widget.SearchView.OnQueryTextListener;
 
@@ -77,9 +78,9 @@ public class ProfileActivity extends Activity implements ActionBar.TabListener {
 		// Inflate the menu; this adds items to the action bar if it is present.
 		getMenuInflater().inflate(R.menu.profile, menu);
 
-		final SearchView searchItem = (SearchView) menu.findItem(R.id.action_search)
-				.getActionView();
-		final MenuItem item = menu.findItem(R.id.action_search);
+		final SearchView searchItem = (SearchView) menu.findItem(
+				R.id.action_search).getActionView();
+		final MenuItem menuItem = menu.findItem(R.id.action_search);
 
 		searchItem.setOnQueryTextListener(new OnQueryTextListener() {
 
@@ -90,8 +91,9 @@ public class ProfileActivity extends Activity implements ActionBar.TabListener {
 						.findFragmentByTag(
 								Utils.makeFragmentName(R.id.pager, 0));
 
-				fragment.new SetSummonerName().execute(query.toLowerCase(Locale.getDefault()));
-				
+				fragment.new SetSummonerName().execute(query.toLowerCase(Locale
+						.getDefault()));
+				menuItem.collapseActionView();
 				return false;
 			}
 
@@ -149,7 +151,13 @@ public class ProfileActivity extends Activity implements ActionBar.TabListener {
 			// getItem is called to instantiate the fragment for the given page.
 			// Return a PlaceholderFragment (defined as a static inner class
 			// below).
-			return ProfileFragment.newInstance(position + 1);
+			switch (position) {
+			case 0:
+				return ProfileFragment.newInstance(position + 1);
+			default:
+				return StatsFragment.newInstance(position + 1);
+			}
+
 		}
 
 		@Override
