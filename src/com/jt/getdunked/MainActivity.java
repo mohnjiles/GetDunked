@@ -274,74 +274,74 @@ public class MainActivity extends Activity implements
 					.fromJsonUrl(
 							"https://prod.api.pvp.net/api/lol/static-data/na/v1.2/champion/"
 									+ champ.getId()
-									+ "?champData=blurb&api_key=762d01c9-8cf4-4dc9-8eff-aa26c92685da",
+									+ "?champData=blurb&api_key=" + Api.KEY.getKey(),
 							Blurb.class);
 			AllyTips allyTips = JsonUtil
 					.fromJsonUrl(
 							"https://prod.api.pvp.net/api/lol/static-data/na/v1.2/champion/"
 									+ champ.getId()
-									+ "?champData=allytips&api_key=762d01c9-8cf4-4dc9-8eff-aa26c92685da",
+									+ "?champData=allytips&api_key=" + Api.KEY.getKey(),
 							AllyTips.class);
 
 			EnemyTips enemyTips = JsonUtil
 					.fromJsonUrl(
 							"https://prod.api.pvp.net/api/lol/static-data/na/v1.2/champion/"
 									+ champ.getId()
-									+ "?champData=enemytips&api_key=762d01c9-8cf4-4dc9-8eff-aa26c92685da",
+									+ "?champData=enemytips&api_key=" + Api.KEY.getKey(),
 							EnemyTips.class);
 
 			ChampInfo info = JsonUtil
 					.fromJsonUrl(
 							"https://prod.api.pvp.net/api/lol/static-data/na/v1.2/champion/"
 									+ champ.getId()
-									+ "?champData=info&api_key=762d01c9-8cf4-4dc9-8eff-aa26c92685da",
+									+ "?champData=info&api_key=" + Api.KEY.getKey(),
 							ChampInfo.class);
 			Lore lore = JsonUtil
 					.fromJsonUrl(
 							"https://prod.api.pvp.net/api/lol/static-data/na/v1.2/champion/"
 									+ champ.getId()
-									+ "?champData=lore&api_key=762d01c9-8cf4-4dc9-8eff-aa26c92685da",
+									+ "?champData=lore&api_key=" + Api.KEY.getKey(),
 							Lore.class);
 
 			Partype partype = JsonUtil
 					.fromJsonUrl(
 							"https://prod.api.pvp.net/api/lol/static-data/na/v1.2/champion/"
 									+ champ.getId()
-									+ "?champData=partype&api_key=762d01c9-8cf4-4dc9-8eff-aa26c92685da",
+									+ "?champData=partype&api_key=" + Api.KEY.getKey(),
 							Partype.class);
 
 			ChampPassive passive = JsonUtil
 					.fromJsonUrl(
 							"https://prod.api.pvp.net/api/lol/static-data/na/v1.2/champion/"
 									+ champ.getId()
-									+ "?champData=passive&api_key=762d01c9-8cf4-4dc9-8eff-aa26c92685da",
+									+ "?champData=passive&api_key=" + Api.KEY.getKey(),
 							ChampPassive.class);
 
 			RecommendedItems recommended = JsonUtil
 					.fromJsonUrl(
 							"https://prod.api.pvp.net/api/lol/static-data/na/v1.2/champion/"
 									+ champ.getId()
-									+ "?champData=recommended&api_key=762d01c9-8cf4-4dc9-8eff-aa26c92685da",
+									+ "?champData=recommended&api_key=" + Api.KEY.getKey(),
 							RecommendedItems.class);
 			ChampSkins skins = JsonUtil
 					.fromJsonUrl(
 							"https://prod.api.pvp.net/api/lol/static-data/na/v1.2/champion/"
 									+ champ.getId()
-									+ "?champData=skins&api_key=762d01c9-8cf4-4dc9-8eff-aa26c92685da",
+									+ "?champData=skins&api_key=" + Api.KEY.getKey(),
 							ChampSkins.class);
 
 			ChampSpell spell = JsonUtil
 					.fromJsonUrl(
 							"https://prod.api.pvp.net/api/lol/static-data/na/v1.2/champion/"
 									+ champ.getId()
-									+ "?champData=spells&api_key=762d01c9-8cf4-4dc9-8eff-aa26c92685da",
+									+ "?champData=spells&api_key=" + Api.KEY.getKey(),
 							ChampSpell.class);
 
 			ChampStats stats = JsonUtil
 					.fromJsonUrl(
 							"https://prod.api.pvp.net/api/lol/static-data/na/v1.2/champion/"
 									+ champ.getId()
-									+ "?champData=stats&api_key=762d01c9-8cf4-4dc9-8eff-aa26c92685da",
+									+ "?champData=stats&api_key=" + Api.KEY.getKey(),
 							ChampStats.class);
 			Log.w("stats", stats.toString());
 
@@ -349,7 +349,7 @@ public class MainActivity extends Activity implements
 					.fromJsonUrl(
 							"https://prod.api.pvp.net/api/lol/static-data/na/v1.2/champion/"
 									+ champ.getId()
-									+ "?champData=tags&api_key=762d01c9-8cf4-4dc9-8eff-aa26c92685da",
+									+ "?champData=tags&api_key=" + Api.KEY.getKey(),
 							Tags.class);
 
 			Champion champion = new Champion();
