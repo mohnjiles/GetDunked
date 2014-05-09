@@ -86,7 +86,9 @@ public class ProfileActivity extends Activity implements ActionBar.TabListener {
 
 			@Override
 			public boolean onQueryTextSubmit(String query) {
-
+				
+				getActionBar().setTitle(query);
+				
 				ProfileFragment fragment = (ProfileFragment) getFragmentManager()
 						.findFragmentByTag(
 								Utils.makeFragmentName(R.id.pager, 0));

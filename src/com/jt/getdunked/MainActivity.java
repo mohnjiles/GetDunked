@@ -267,7 +267,6 @@ public class MainActivity extends Activity implements
 	private void addAllChampionsToDatabase(ChampIds champIds) {
 
 		ChampionDatabaseHelper db = new ChampionDatabaseHelper(this);
-
 		for (Champions champ : champIds.getChampions()) {
 
 			Blurb blurb = JsonUtil

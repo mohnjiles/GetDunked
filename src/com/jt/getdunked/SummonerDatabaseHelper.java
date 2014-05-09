@@ -9,12 +9,12 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
-import com.jt.getdunked.summonerdata.SummonerIds;
+import com.jt.getdunked.summonerdata.Summoner;
 
 public class SummonerDatabaseHelper extends SQLiteOpenHelper {
 
 	public static final String DATABASE_NAME = "summonerManager";
-	public static final int DATABASE_VERSION = 14;
+	public static final int DATABASE_VERSION = 15;
 
 	private static final String TABLE_SUMMONER_ID = "summonerIds";
 	private static final String KEY_ID = "id";
@@ -24,7 +24,7 @@ public class SummonerDatabaseHelper extends SQLiteOpenHelper {
 		super(context, DATABASE_NAME, null, DATABASE_VERSION);
 	}
 
-	public void addSummoner(SummonerIds summoner) {
+	public void addSummoner(Summoner summoner) {
 
 		SQLiteDatabase db = this.getWritableDatabase();
 		ContentValues values = new ContentValues();
@@ -33,7 +33,7 @@ public class SummonerDatabaseHelper extends SQLiteOpenHelper {
 			values.put(KEY_NAME, summoner.getName());
 			db.insert(TABLE_SUMMONER_ID, null, values);
 			Log.w("Summoner added", "Summoner \"" + summoner.getName()
-					+ "\" with ID " + summoner.getId());
+					+ "\" with ID " + summoner.getId() + " Level: " + summoner.getSummonerLevel());
 		}
 
 		db.close();
@@ -53,11 +53,12 @@ public class SummonerDatabaseHelper extends SQLiteOpenHelper {
 	public int getSummonerIdByName(String name) {
 
 		Log.w("Summoner DB", "getSummonerIdByName arg: " + name);
-		
+
 		SQLiteDatabase db = this.getReadableDatabase();
 		Cursor idCursor = db.rawQuery("SELECT " + KEY_ID + " FROM "
 				+ TABLE_SUMMONER_ID + " WHERE REPLACE(LOWER(" + KEY_NAME
-				+ "), ' ', '')" + " = ?", new String[] { name.toLowerCase(Locale.getDefault()) });
+				+ "), ' ', '')" + " = ?",
+				new String[] { name.toLowerCase(Locale.getDefault()) });
 
 		if (idCursor.moveToFirst()) {
 			int id = Integer.parseInt(idCursor.getString(0));
@@ -68,6 +69,28 @@ public class SummonerDatabaseHelper extends SQLiteOpenHelper {
 		} else {
 			return 0;
 		}
+	}
+
+	public Summoner getSummonerByName(String name) {
+
+		SQLiteDatabase db = this.getReadableDatabase();
+		Cursor summonerCursor = db.rawQuery("SELECT * FROM "
+				+ TABLE_SUMMONER_ID + " WHERE TRIM(LOWER(" + KEY_NAME
+				+ "))" + " = ?",
+				new String[] { name.toLowerCase(Locale.getDefault()) });
+		
+		Summoner summoner = new Summoner();
+		if (summonerCursor.moveToFirst()) {
+			summoner.setId(Integer.parseInt(summonerCursor.getString(0)));
+			summoner.setName(summonerCursor.getString(1));
+		} 
+		
+		Log.w("Summoner DB", "Name: " + summoner.getName());
+
+		db.close();
+		summonerCursor.close();
+
+		return summoner;
 	}
 
 	@Override

@@ -1,42 +1,80 @@
-
 package com.jt.getdunked.summonerdata;
 
+import com.google.gson.annotations.Expose;
 
-public class Summoner{
-   	private Number id;
-   	private String name;
-   	private Number profileIconId;
-   	private Number revisionDate;
-   	private Number summonerLevel;
+public class Summoner {
 
- 	public Number getId(){
-		return this.id;
+	@Expose
+	private Integer id;
+	@Expose
+	private String name;
+	@Expose
+	private Integer profileIconId;
+	@Expose
+	private Long revisionDate;
+	@Expose
+	private Integer summonerLevel;
+	@Expose
+	private Status status;
+	@Expose
+	private String message;
+	@Expose
+	private Integer status_code;
+
+	public Integer getId() {
+		return id;
 	}
-	public void setId(Number id){
+
+	public void setId(Integer id) {
 		this.id = id;
 	}
- 	public String getName(){
-		return this.name;
+
+	public String getName() {
+		return name;
 	}
-	public void setName(String name){
+
+	public void setName(String name) {
 		this.name = name;
 	}
- 	public Number getProfileIconId(){
-		return this.profileIconId;
+
+	public Integer getProfileIconId() {
+		return profileIconId;
 	}
-	public void setProfileIconId(Number profileIconId){
+
+	public void setProfileIconId(Integer profileIconId) {
 		this.profileIconId = profileIconId;
 	}
- 	public Number getRevisionDate(){
-		return this.revisionDate;
+
+	public Long getRevisionDate() {
+		return revisionDate;
 	}
-	public void setRevisionDate(Number revisionDate){
+
+	public void setRevisionDate(Long revisionDate) {
 		this.revisionDate = revisionDate;
 	}
- 	public Number getSummonerLevel(){
-		return this.summonerLevel;
+
+	public Integer getSummonerLevel() {
+		return summonerLevel;
 	}
-	public void setSummonerLevel(Number summonerLevel){
+
+	public void setSummonerLevel(Integer summonerLevel) {
 		this.summonerLevel = summonerLevel;
 	}
+
+	public String getMessage() {
+		return message;
+	}
+
+	public void setMessage(String message) {
+		this.message = message;
+	}
+
+	public Integer getStatus_code() {
+		return status_code;
+	}
+
+	public void setStatus_code(Integer status_code) {
+		this.status_code = status_code;
+	}
+
 }
